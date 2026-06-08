@@ -1,0 +1,606 @@
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cakes &amp; Bakes | Find and Prebook Home Bakers</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700;800&family=Mukta:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap"
+    rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: "Mukta", ui-sans-serif, system-ui, sans-serif;
+    }
+
+    .font-display {
+      font-family: "Playfair Display", Georgia, serif;
+    }
+
+    .font-cursive {
+      font-family: "Dancing Script", cursive;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+  </style>
+</head>
+
+<body class="bg-stone-50 text-stone-900">
+  <header class="sticky top-0 z-50 border-b border-rose-100 bg-white/90 backdrop-blur">
+    <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 sm:px-8">
+      <a class="flex items-center gap-3 font-bold text-stone-950 hover:opacity-90 transition-opacity" href="#">
+        <div
+          class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-rose-600 to-amber-500 text-white shadow-md shadow-rose-200">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 18a4 4 0 0 1-1.15-7.83A4 4 0 0 1 12 6a4 4 0 0 1 7.15 4.17A4 4 0 0 1 18 18H6Z" />
+            <path d="M6 18h12v3H6v-3Z" />
+          </svg>
+        </div>
+        <span
+          class="font-display text-xl font-bold bg-gradient-to-r from-stone-950 to-rose-700 bg-clip-text text-transparent">Cakes
+          &amp; Bakes</span>
+      </a>
+      <nav class="hidden items-center gap-6 text-sm font-semibold text-stone-700 sm:flex"
+        aria-label="Primary navigation">
+        <a class="hover:text-rose-700" href="#discover">Discover</a>
+        <a class="hover:text-rose-700" href="#bakers">Bakers</a>
+        <button class="rounded-lg bg-stone-950 px-4 py-2 text-white hover:bg-rose-700" type="button"
+          data-open-account>Sign In</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section
+      class="bg-[linear-gradient(110deg,rgba(255,247,237,0.94),rgba(255,228,230,0.68)),url('https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=1800&q=80')] bg-cover bg-center">
+      <div class="mx-auto flex min-h-[86vh] max-w-7xl items-center px-5 py-14 sm:px-8">
+        <div class="max-w-2xl">
+          <p class="mb-4 text-sm font-bold uppercase tracking-widest text-rose-700">Fresh bakes near you</p>
+          <h1 class="font-display text-5xl font-extrabold leading-tight text-stone-950 sm:text-7xl">Cakes &amp; Bakes
+            Made Just for You</h1>
+          <p class="mt-6 text-lg leading-8 text-stone-700">
+            Discover talented home bakers near you. Browse their creations, read real reviews, and prebook cakes,
+            cookies, chocolates, and more exactly the way you want them.
+          </p>
+          <form
+            class="mt-8 flex max-w-xl overflow-hidden rounded-lg border border-amber-200 bg-white shadow-lg shadow-stone-950/10"
+            id="searchForm">
+            <label class="sr-only" for="cravingSearch">Search baked food</label>
+            <input class="min-w-0 flex-1 px-5 py-4 outline-none" id="cravingSearch" type="search"
+              placeholder="What are you craving? e.g. chocolate cake">
+            <button class="bg-amber-900 px-6 py-4 font-bold text-white hover:bg-rose-700" type="submit">Search</button>
+          </form>
+          <div class="mt-5 flex flex-wrap gap-3">
+            <a class="rounded-full bg-amber-900 px-5 py-2 text-sm font-bold text-white" href="#discover">Cakes</a>
+            <a class="rounded-full border border-amber-200 bg-white/70 px-5 py-2 text-sm font-bold text-amber-900"
+              href="#discover">Cookies</a>
+            <a class="rounded-full border border-amber-200 bg-white/70 px-5 py-2 text-sm font-bold text-amber-900"
+              href="#discover">Chocolates</a>
+            <a class="rounded-full border border-amber-200 bg-white/70 px-5 py-2 text-sm font-bold text-amber-900"
+              href="#discover">Cupcakes</a>
+          </div>
+          <button
+            class="mt-8 rounded-lg bg-rose-600 px-6 py-3 font-bold text-white shadow-lg shadow-rose-950/20 hover:bg-rose-700"
+            type="button" data-open-account>Sign In</button>
+        </div>
+      </div>
+    </section>
+
+    <aside
+      class="fixed left-1/2 top-6 z-[60] hidden max-h-[calc(100vh-3rem)] w-[min(92vw,540px)] -translate-x-1/2 overflow-y-auto rounded-lg border border-white/70 bg-white p-5 shadow-2xl shadow-stone-950/30"
+      id="account" aria-label="Account forms" aria-hidden="true">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <p class="text-sm font-bold uppercase tracking-widest text-rose-700">Sign in</p>
+          <p class="mt-2 text-sm text-stone-600">Create your customer account to start prebooking.</p>
+        </div>
+        <button
+          class="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-stone-200 text-xl font-bold text-stone-600 hover:bg-stone-100"
+          type="button" aria-label="Close account form" data-close-account>&times;</button>
+      </div>
+
+      <form class="role-form mt-5 grid gap-4" data-role-form="customer">
+        <div class="grid gap-4 sm:grid-cols-2">
+          <label class="grid gap-1 text-sm font-semibold text-stone-700">Full Name
+            <input class="rounded-lg border border-stone-200 px-3 py-3 font-normal outline-none focus:border-rose-500"
+              type="text" placeholder="Your name">
+          </label>
+          <label class="grid gap-1 text-sm font-semibold text-stone-700">Phone Number
+            <input class="rounded-lg border border-stone-200 px-3 py-3 font-normal outline-none focus:border-rose-500"
+              type="tel" placeholder="Contact number">
+          </label>
+        </div>
+        <label class="grid gap-1 text-sm font-semibold text-stone-700">Email Address
+          <input class="rounded-lg border border-stone-200 px-3 py-3 font-normal outline-none focus:border-rose-500"
+            type="email" placeholder="customer@example.com">
+        </label>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <label class="grid gap-1 text-sm font-semibold text-stone-700">Password
+            <input class="rounded-lg border border-stone-200 px-3 py-3 font-normal outline-none focus:border-rose-500"
+              type="password" placeholder="Create password">
+          </label>
+          <label class="grid gap-1 text-sm font-semibold text-stone-700">Location
+            <input class="rounded-lg border border-stone-200 px-3 py-3 font-normal outline-none focus:border-rose-500"
+              type="text" placeholder="City or area">
+          </label>
+        </div>
+        <label class="grid gap-1 text-sm font-semibold text-stone-700">Favorite Baked Food
+          <select class="rounded-lg border border-stone-200 px-3 py-3 font-normal outline-none focus:border-rose-500">
+            <option>Cake</option>
+            <option>Cookies</option>
+            <option>Chocolate</option>
+            <option>Cupcakes</option>
+            <option>Pastries</option>
+          </select>
+        </label>
+        <button class="rounded-lg bg-rose-600 px-5 py-3 font-bold text-white hover:bg-rose-700" type="submit">Create
+          Customer Account</button>
+        <p class="form-message hidden rounded-lg bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700"></p>
+      </form>
+    </aside>
+
+    <section class="mx-auto max-w-7xl px-5 py-16 sm:px-8" id="discover">
+      <div class="max-w-3xl">
+        <p class="text-sm font-bold uppercase tracking-widest text-rose-700">Discover by dessert</p>
+        <h2 class="mt-3 font-display text-4xl font-bold text-stone-950 sm:text-5xl">Search based on what you want to
+          eat.</h2>
+        <p class="mt-4 text-stone-600">Filter local home bakers by baked food category, location, price range, rating,
+          and availability.</p>
+      </div>
+      <div class="mt-10 grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+        <article
+          class="group relative overflow-hidden rounded-2xl border border-rose-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-rose-200 flex flex-col">
+          <div class="relative overflow-hidden aspect-[4/3] bg-stone-100">
+            <img class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=600&q=80"
+              alt="Custom Cakes" loading="lazy">
+            <span
+              class="absolute top-3 left-3 rounded-full bg-white/95 px-3 py-1 text-lg font-cursive text-rose-700 shadow-sm backdrop-blur-sm leading-none">Cake</span>
+          </div>
+          <div class="p-5 flex-1 flex flex-col justify-between">
+            <div>
+              <h3 class="font-display text-xl font-bold text-stone-950">Custom Cakes</h3>
+              <p class="mt-2 text-sm text-stone-600 leading-relaxed">Birthday, wedding, theme, and celebration cakes
+                from nearby bakers.</p>
+            </div>
+          </div>
+        </article>
+        <article
+          class="group relative overflow-hidden rounded-2xl border border-rose-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-rose-200 flex flex-col">
+          <div class="relative overflow-hidden aspect-[4/3] bg-stone-100">
+            <img class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              src="https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=600&q=80"
+              alt="Cookies & Brownies" loading="lazy">
+            <span
+              class="absolute top-3 left-3 rounded-full bg-white/95 px-3 py-1 text-lg font-cursive text-rose-700 shadow-sm backdrop-blur-sm leading-none">Cookies</span>
+          </div>
+          <div class="p-5 flex-1 flex flex-col justify-between">
+            <div>
+              <h3 class="font-display text-xl font-bold text-stone-950">Cookies &amp; Brownies</h3>
+              <p class="mt-2 text-sm text-stone-600 leading-relaxed">Compare flavors, batch sizes, delivery slots, and
+                baker ratings.</p>
+            </div>
+          </div>
+        </article>
+        <article
+          class="group relative overflow-hidden rounded-2xl border border-rose-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-rose-200 flex flex-col">
+          <div class="relative overflow-hidden aspect-[4/3] bg-stone-100">
+            <img class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              src="https://images.unsplash.com/photo-1511381939415-e44015466834?auto=format&fit=crop&w=600&q=80"
+              alt="Chocolates" loading="lazy">
+            <span
+              class="absolute top-3 left-3 rounded-full bg-white/95 px-3 py-1 text-lg font-cursive text-rose-700 shadow-sm backdrop-blur-sm leading-none">Chocolate</span>
+          </div>
+          <div class="p-5 flex-1 flex flex-col justify-between">
+            <div>
+              <h3 class="font-display text-xl font-bold text-stone-950">Chocolates</h3>
+              <p class="mt-2 text-sm text-stone-600 leading-relaxed">Find handmade chocolates, gift boxes, and festive
+                dessert packs.</p>
+            </div>
+          </div>
+        </article>
+        <article
+          class="group relative overflow-hidden rounded-2xl border border-rose-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-rose-200 flex flex-col">
+          <div class="relative overflow-hidden aspect-[4/3] bg-stone-100">
+            <img class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              src="https://images.unsplash.com/photo-1576618148400-f54bed99fcfd?auto=format&fit=crop&w=600&q=80"
+              alt="Mini Cupcakes" loading="lazy">
+            <span
+              class="absolute top-3 left-3 rounded-full bg-white/95 px-3 py-1 text-lg font-cursive text-rose-700 shadow-sm backdrop-blur-sm leading-none">Cupcakes</span>
+          </div>
+          <div class="p-5 flex-1 flex flex-col justify-between">
+            <div>
+              <h3 class="font-display text-xl font-bold text-stone-950">Mini Cupcakes</h3>
+              <p class="mt-2 text-sm text-stone-600 leading-relaxed">Frosted delights for parties, gifts, and afternoon
+                tea.</p>
+            </div>
+          </div>
+        </article>
+        <article
+          class="group relative overflow-hidden rounded-2xl border border-rose-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-rose-200 flex flex-col">
+          <div class="relative overflow-hidden aspect-[4/3] bg-stone-100">
+            <img class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=600&q=80"
+              alt="Fresh Pastries" loading="lazy">
+            <span
+              class="absolute top-3 left-3 rounded-full bg-white/95 px-3 py-1 text-lg font-cursive text-rose-700 shadow-sm backdrop-blur-sm leading-none">Pastries</span>
+          </div>
+          <div class="p-5 flex-1 flex flex-col justify-between">
+            <div>
+              <h3 class="font-display text-xl font-bold text-stone-950">Fresh Pastries</h3>
+              <p class="mt-2 text-sm text-stone-600 leading-relaxed">Flaky croissants, danishes, and fruit tarts baked
+                to order.</p>
+            </div>
+          </div>
+        </article>
+        <article
+          class="group relative overflow-hidden rounded-2xl border border-rose-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-rose-200 flex flex-col">
+          <div class="relative overflow-hidden aspect-[4/3] bg-stone-100">
+            <img class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              src="https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80"
+              alt="Bread & Buns" loading="lazy">
+            <span
+              class="absolute top-3 left-3 rounded-full bg-white/95 px-3 py-1 text-lg font-cursive text-rose-700 shadow-sm backdrop-blur-sm leading-none">Bread</span>
+          </div>
+          <div class="p-5 flex-1 flex flex-col justify-between">
+            <div>
+              <h3 class="font-display text-xl font-bold text-stone-950">Bread &amp; Buns</h3>
+              <p class="mt-2 text-sm text-stone-600 leading-relaxed">Soft brioche, pav, and artisanal loaves for
+                breakfast or snacking.</p>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-7xl px-5 py-16 sm:px-8" id="bakers">
+      <div class="max-w-3xl">
+        <p class="text-sm font-bold uppercase tracking-widest text-rose-700">Top bakers nearby</p>
+        <h2 class="mt-3 font-display text-4xl font-bold text-stone-950 sm:text-5xl">Meet the home bakers ready to
+          prebook.</h2>
+        <p class="mt-4 text-stone-600">Browse local Indian bakers with specialties, ratings, and prebooking
+          availability.</p>
+      </div>
+      <div class="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+        <article class="rounded-3xl border border-rose-100 bg-white p-6 shadow-sm">
+          <div class="flex items-center justify-between gap-4">
+            <div>
+              <h3 class="text-xl font-bold text-stone-950">Priya Sharma</h3>
+              <p class="text-sm text-stone-500">Mumbai</p>
+            </div>
+            <span class="rounded-full bg-rose-50 px-3 py-1 text-sm font-semibold text-rose-700">⭐ 4.9</span>
+          </div>
+          <p class="mt-4 text-sm font-semibold text-stone-700">Specialty: Celebration Cakes</p>
+          <p class="mt-2 text-stone-600">Handmade fondant and buttercream cakes with elegant Indian themes.</p>
+          <button
+            class="mt-5 rounded-full bg-gradient-to-r from-rose-500 to-amber-400 px-5 py-2 text-sm font-bold text-white hover:opacity-90">Prebook</button>
+        </article>
+        <article class="rounded-3xl border border-rose-100 bg-white p-6 shadow-sm">
+          <div class="flex items-center justify-between gap-4">
+            <div>
+              <h3 class="text-xl font-bold text-stone-950">Meera Iyer</h3>
+              <p class="text-sm text-stone-500">Bengaluru</p>
+            </div>
+            <span class="rounded-full bg-rose-50 px-3 py-1 text-sm font-semibold text-rose-700">⭐ 4.8</span>
+          </div>
+          <p class="mt-4 text-sm font-semibold text-stone-700">Specialty: Cupcakes &amp; Desserts</p>
+          <p class="mt-2 text-stone-600">Mini dessert boxes and signature cupcakes with vibrant Indian flavours.</p>
+          <button
+            class="mt-5 rounded-full bg-gradient-to-r from-rose-500 to-amber-400 px-5 py-2 text-sm font-bold text-white hover:opacity-90">Prebook</button>
+        </article>
+        <article class="rounded-3xl border border-rose-100 bg-white p-6 shadow-sm">
+          <div class="flex items-center justify-between gap-4">
+            <div>
+              <h3 class="text-xl font-bold text-stone-950">Ananya Patel</h3>
+              <p class="text-sm text-stone-500">Chennai</p>
+            </div>
+            <span class="rounded-full bg-rose-50 px-3 py-1 text-sm font-semibold text-rose-700">⭐ 4.7</span>
+          </div>
+          <p class="mt-4 text-sm font-semibold text-stone-700">Specialty: Pastries</p>
+          <p class="mt-2 text-stone-600">Buttery pastries, tarts, and seasonal sweet treats for every celebration.</p>
+          <button
+            class="mt-5 rounded-full bg-gradient-to-r from-rose-500 to-amber-400 px-5 py-2 text-sm font-bold text-white hover:opacity-90">Prebook</button>
+        </article>
+        <article class="rounded-3xl border border-rose-100 bg-white p-6 shadow-sm">
+          <div class="flex items-center justify-between gap-4">
+            <div>
+              <h3 class="text-xl font-bold text-stone-950">Rohan Mehta</h3>
+              <p class="text-sm text-stone-500">Delhi</p>
+            </div>
+            <span class="rounded-full bg-rose-50 px-3 py-1 text-sm font-semibold text-rose-700">⭐ 4.8</span>
+          </div>
+          <p class="mt-4 text-sm font-semibold text-stone-700">Specialty: Cookies &amp; Brownies</p>
+          <p class="mt-2 text-stone-600">Soft cookies and fudgy brownies crafted with local, premium ingredients.</p>
+          <button
+            class="mt-5 rounded-full bg-gradient-to-r from-rose-500 to-amber-400 px-5 py-2 text-sm font-bold text-white hover:opacity-90">Prebook</button>
+        </article>
+        <article class="rounded-3xl border border-rose-100 bg-white p-6 shadow-sm">
+          <div class="flex items-center justify-between gap-4">
+            <div>
+              <h3 class="text-xl font-bold text-stone-950">Sneha Kulkarni</h3>
+              <p class="text-sm text-stone-500">Pune</p>
+            </div>
+            <span class="rounded-full bg-rose-50 px-3 py-1 text-sm font-semibold text-rose-700">⭐ 4.9</span>
+          </div>
+          <p class="mt-4 text-sm font-semibold text-stone-700">Specialty: Bread &amp; Buns</p>
+          <p class="mt-2 text-stone-600">Fresh pav, buns, and artisanal loaves baked daily for breakfast and brunch.</p>
+          <button
+            class="mt-5 rounded-full bg-gradient-to-r from-rose-500 to-amber-400 px-5 py-2 text-sm font-bold text-white hover:opacity-90">Prebook</button>
+        </article>
+      </div>
+    </section>
+
+    <section class="bg-white py-16" id="prebook">
+      <div class="mx-auto grid max-w-7xl gap-10 px-5 sm:px-8 lg:grid-cols-2">
+        <div>
+          <p class="text-sm font-bold uppercase tracking-widest text-rose-700">Review and prebook</p>
+          <h2 class="mt-3 font-display text-4xl font-bold text-stone-950 sm:text-5xl">Choose bakers with confidence.
+          </h2>
+          <p class="mt-4 text-stone-600">
+            Every baker profile can show photos of previous work, customer reviews, available slots, pricing notes, and
+            booking options.
+          </p>
+        </div>
+        <div class="grid gap-4">
+          <div class="rounded-lg border border-stone-200 p-5">
+            <h3 class="font-bold">1. Sign in</h3>
+            <p class="mt-1 text-stone-600">Create an account so bookings and reviews stay connected to you.</p>
+          </div>
+          <div class="rounded-lg border border-stone-200 p-5">
+            <h3 class="font-bold">2. Compare local bakers</h3>
+            <p class="mt-1 text-stone-600">Check portfolios, ratings, specialties, and customer feedback.</p>
+          </div>
+          <div class="rounded-lg border border-stone-200 p-5">
+            <h3 class="font-bold">3. Prebook your order</h3>
+            <p class="mt-1 text-stone-600">Reserve your preferred date, dessert type, quantity, and pickup or delivery
+              option.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-stone-800 bg-stone-950 text-stone-300" id="footer">
+    <div class="mx-auto max-w-7xl px-5 py-16 sm:px-8">
+      <div class="grid gap-10 md:grid-cols-4 lg:grid-cols-5 border-b border-stone-800 pb-12">
+        <!-- Brand Section -->
+        <div class="md:col-span-2">
+          <a class="flex items-center gap-3 font-bold text-white hover:opacity-90 transition-opacity" href="#">
+            <div
+              class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-rose-600 to-amber-500 text-white shadow-md shadow-rose-900/30">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                aria-hidden="true">
+                <path d="M6 18a4 4 0 0 1-1.15-7.83A4 4 0 0 1 12 6a4 4 0 0 1 7.15 4.17A4 4 0 0 1 18 18H6Z" />
+                <path d="M6 18h12v3H6v-3Z" />
+              </svg>
+            </div>
+            <span
+              class="font-display text-xl font-bold bg-gradient-to-r from-white to-rose-400 bg-clip-text text-transparent">Cakes
+              &amp; Bakes</span>
+          </a>
+          <p class="mt-4 max-w-sm text-stone-400 text-sm leading-relaxed">
+            Your premier marketplace for prebooking custom, handcrafted treats from the finest home bakers in your area.
+            Delivering fresh happiness directly to your doorstep.
+          </p>
+          <div class="mt-6 flex gap-4">
+            <!-- Instagram -->
+            <a class="group rounded-full bg-stone-900 p-2.5 text-stone-400 hover:bg-rose-600 hover:text-white transition-all duration-300"
+              href="#" aria-label="Instagram">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+              </svg>
+            </a>
+            <!-- Facebook -->
+            <a class="group rounded-full bg-stone-900 p-2.5 text-stone-400 hover:bg-rose-600 hover:text-white transition-all duration-300"
+              href="#" aria-label="Facebook">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+              </svg>
+            </a>
+            <!-- Pinterest -->
+            <a class="group rounded-full bg-stone-900 p-2.5 text-stone-400 hover:bg-rose-600 hover:text-white transition-all duration-300"
+              href="#" aria-label="Pinterest">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path
+                  d="M12 2a10 10 0 0 0-3.8 19.2c-.1-.9-.2-2.3 0-3.3l1.3-5.6s-.3-.7-.3-1.7c0-1.6.9-2.8 2.1-2.8 1 0 1.5.8 1.5 1.7 0 1-.6 2.6-.9 4.1-.3 1.2.6 2.2 1.8 2.2 2.1 0 3.8-2.3 3.8-5.5 0-2.9-2.1-4.9-5.1-4.9-3.5 0-5.5 2.6-5.5 5.3 0 1 .4 2.2.9 2.8.1.1.1.2.1.3l-.3 1.4c-.1.2-.2.3-.4.2-1.3-.6-2.1-2.5-2.1-4 0-3.3 2.4-6.3 6.9-6.3 3.6 0 6.4 2.6 6.4 6 0 3.6-2.3 6.5-5.4 6.5-1.1 0-2.1-.6-2.4-1.3l-.7 2.6c-.3 1-1 2.2-1.5 3A10 10 0 1 0 12 2z">
+                </path>
+              </svg>
+            </a>
+            <!-- Twitter -->
+            <a class="group rounded-full bg-stone-900 p-2.5 text-stone-400 hover:bg-rose-600 hover:text-white transition-all duration-300"
+              href="#" aria-label="Twitter">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path
+                  d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z">
+                </path>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <div>
+          <h4 class="font-display text-sm font-bold uppercase tracking-wider text-white">Explore</h4>
+          <ul class="mt-4 space-y-2 text-sm">
+            <li><a class="text-stone-400 hover:text-rose-400 transition-colors duration-200"
+                href="#discover">Discover</a></li>
+            <li><a class="text-stone-400 hover:text-rose-400 transition-colors duration-200" href="#bakers">Top
+                Bakers</a></li>
+            <li><a class="text-stone-400 hover:text-rose-400 transition-colors duration-200" href="#prebook">How It
+                Works</a></li>
+            <li><button class="text-stone-400 hover:text-rose-400 transition-colors duration-200 text-left outline-none"
+                type="button" data-open-account>Sign In / Register</button></li>
+          </ul>
+        </div>
+
+        <!-- Categories Quick Links -->
+        <div>
+          <h4 class="font-display text-sm font-bold uppercase tracking-wider text-white">Categories</h4>
+          <ul class="mt-4 space-y-2 text-sm">
+            <li><a class="text-stone-400 hover:text-rose-400 transition-colors duration-200" href="#discover">Custom
+                Cakes</a></li>
+            <li><a class="text-stone-400 hover:text-rose-400 transition-colors duration-200" href="#discover">Cookies
+                &amp; Brownies</a></li>
+            <li><a class="text-stone-400 hover:text-rose-400 transition-colors duration-200" href="#discover">Artisanal
+                Chocolates</a></li>
+            <li><a class="text-stone-400 hover:text-rose-400 transition-colors duration-200" href="#discover">Mini
+                Cupcakes</a></li>
+            <li><a class="text-stone-400 hover:text-rose-400 transition-colors duration-200" href="#discover">Fresh
+                Pastries</a></li>
+            <li><a class="text-stone-400 hover:text-rose-400 transition-colors duration-200" href="#discover">Bread
+                &amp; Buns</a></li>
+          </ul>
+        </div>
+
+        <!-- Contact / Location Info -->
+        <div>
+          <h4 class="font-display text-sm font-bold uppercase tracking-wider text-white">Contact Us</h4>
+          <ul class="mt-4 space-y-3.5 text-sm">
+            <li class="flex items-start gap-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0 text-rose-500" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              <a class="text-stone-400 hover:text-rose-400 transition-colors duration-200 break-all"
+                href="mailto:hello@cakesandbakes.com">hello@cakesandbakes.com</a>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0 text-rose-500" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              </svg>
+              <span class="text-stone-400">+91 98765 43210</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0 text-rose-500" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <span class="text-stone-400 leading-relaxed">
+                Indiranagar, Bengaluru,<br>
+                Karnataka 560038
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Bottom bar -->
+      <div
+        class="mt-8 flex flex-col gap-4 text-center text-xs text-stone-500 sm:flex-row sm:justify-between sm:text-left">
+        <p>&copy; 2026 Cakes &amp; Bakes. All rights reserved.</p>
+        <div class="flex justify-center gap-6 sm:justify-start">
+          <a class="hover:text-stone-300 transition-colors duration-200" href="#">Privacy Policy</a>
+          <a class="hover:text-stone-300 transition-colors duration-200" href="#">Terms of Service</a>
+          <a class="hover:text-stone-300 transition-colors duration-200" href="#">Cookie Policy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Success Notification Modal -->
+  <div id="successModal"
+    class="fixed inset-0 z-[70] hidden flex items-center justify-center bg-stone-950/50 backdrop-blur-sm p-4"
+    aria-modal="true" role="dialog">
+    <div
+      class="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-center align-middle shadow-2xl transition-all border border-stone-100">
+      <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+        </svg>
+      </div>
+      <h3 class="mt-4 text-lg font-bold text-stone-900 font-display" id="successTitle">Sign In Successful</h3>
+      <p class="mt-2 text-sm text-stone-500" id="successMessage">Welcome! You have successfully signed in.</p>
+      <div class="mt-6">
+        <button id="successOkButton" type="button"
+          class="inline-flex justify-center rounded-lg bg-stone-950 px-6 py-2.5 text-sm font-semibold text-white shadow-md hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 transition-all w-full sm:w-auto">
+          OK
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const accountPanel = document.querySelector("#account");
+    const openAccountButtons = document.querySelectorAll("[data-open-account]");
+    const closeAccountButton = document.querySelector("[data-close-account]");
+    const customerForm = document.querySelector('[data-role-form="customer"]');
+    const successModal = document.querySelector("#successModal");
+    const successTitle = document.querySelector("#successTitle");
+    const successMessage = document.querySelector("#successMessage");
+    const successOkButton = document.querySelector("#successOkButton");
+
+    function openAccountPanel(event) {
+      event.preventDefault();
+      accountPanel.classList.remove("hidden");
+      accountPanel.setAttribute("aria-hidden", "false");
+    }
+
+    function closeAccountPanel() {
+      accountPanel.classList.add("hidden");
+      accountPanel.setAttribute("aria-hidden", "true");
+    }
+
+    openAccountButtons.forEach((button) => button.addEventListener("click", openAccountPanel));
+    closeAccountButton.addEventListener("click", closeAccountPanel);
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        closeAccountPanel();
+        successModal.classList.add("hidden");
+        successModal.classList.remove("flex");
+      }
+    });
+
+    customerForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      // Hide form modal
+      closeAccountPanel();
+
+      // Setup success modal texts
+      successTitle.textContent = "Sign In Successful";
+      successMessage.textContent = "Welcome back! You have successfully signed in.";
+
+      // Show success modal
+      successModal.classList.remove("hidden");
+      successModal.classList.add("flex");
+
+      // Reset form inputs
+      customerForm.reset();
+    });
+
+    successOkButton.addEventListener("click", () => {
+      successModal.classList.add("hidden");
+      successModal.classList.remove("flex");
+    });
+
+    successModal.addEventListener("click", (event) => {
+      if (event.target === successModal) {
+        successModal.classList.add("hidden");
+        successModal.classList.remove("flex");
+      }
+    });
+
+    document.querySelector("#searchForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      document.querySelector("#discover").scrollIntoView({ behavior: "smooth" });
+    });
+  </script>
+</body>
+
+</html>
