@@ -1,3 +1,6 @@
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -24,17 +27,80 @@
     html {
       scroll-behavior: smooth;
     }
+
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #e11d48;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 0.8s linear infinite;
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .modal-overlay {
+      backdrop-filter: blur(4px);
+    }
+
+    .baker-card {
+      transition: all 0.3s ease;
+    }
+
+    .baker-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .fav-btn.active {
+      color: #e11d48;
+      fill: #e11d48;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 9999;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .tab-btn.active {
+      background: #e11d48;
+      color: white;
+    }
+
+    .step-done {
+      background: #10b981 !important;
+    }
   </style>
 </head>
 
 <body class="bg-stone-50 text-stone-900">
+
+  <!-- ─── TOAST ─── -->
+  <div id="toast" class="toast rounded-xl bg-stone-950 px-5 py-3 text-sm font-semibold text-white shadow-2xl"></div>
+
+  <!-- ─── HEADER ─── -->
   <header class="sticky top-0 z-50 border-b border-rose-100 bg-white/90 backdrop-blur">
     <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 sm:px-8">
       <a class="flex items-center gap-3 font-bold text-stone-950 hover:opacity-90 transition-opacity" href="#">
         <div
           class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-rose-600 to-amber-500 text-white shadow-md shadow-rose-200">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M6 18a4 4 0 0 1-1.15-7.83A4 4 0 0 1 12 6a4 4 0 0 1 7.15 4.17A4 4 0 0 1 18 18H6Z" />
             <path d="M6 18h12v3H6v-3Z" />
           </svg>
@@ -43,105 +109,87 @@
           class="font-display text-xl font-bold bg-gradient-to-r from-stone-950 to-rose-700 bg-clip-text text-transparent">Cakes
           &amp; Bakes</span>
       </a>
-      <nav class="hidden items-center gap-6 text-sm font-semibold text-stone-700 sm:flex"
-        aria-label="Primary navigation">
+      <nav class="hidden items-center gap-6 text-sm font-semibold text-stone-700 sm:flex">
         <a class="hover:text-rose-700" href="#discover">Discover</a>
         <a class="hover:text-rose-700" href="#bakers">Bakers</a>
-        <button class="rounded-lg bg-stone-950 px-4 py-2 text-white hover:bg-rose-700" type="button"
-          data-open-account>Sign In</button>
+        <button id="navFavBtn" class="hidden hover:text-rose-700" onclick="openFavModal()">❤️ Favourites</button>
+        <div id="navUserArea" class="hidden items-center gap-3">
+          <span id="navUserName" class="text-rose-700 font-bold"></span>
+          <button onclick="logoutUser()"
+            class="rounded-lg border border-stone-200 px-4 py-2 text-sm hover:bg-stone-100">Sign Out</button>
+        </div>
+        <button id="navSignInBtn" class="rounded-lg bg-stone-950 px-4 py-2 text-white hover:bg-rose-700" type="button"
+          onclick="openAccountPanel()">Sign In</button>
       </nav>
     </div>
   </header>
 
+  <!-- ─── HERO ─── -->
   <main>
     <section
       class="bg-[linear-gradient(110deg,rgba(255,247,237,0.94),rgba(255,228,230,0.68)),url('https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=1800&q=80')] bg-cover bg-center">
       <div class="mx-auto flex min-h-[86vh] max-w-7xl items-center px-5 py-14 sm:px-8">
         <div class="max-w-2xl">
           <p class="mb-4 text-sm font-bold uppercase tracking-widest text-rose-700">Fresh bakes near you</p>
-          <h1 class="font-display text-5xl font-extrabold leading-tight text-stone-950 sm:text-7xl">Cakes &amp; Bakes
-            Made Just for You</h1>
-          <p class="mt-6 text-lg leading-8 text-stone-700">
-            Discover talented home bakers near you. Browse their creations, read real reviews, and prebook cakes,
-            cookies, chocolates, and more exactly the way you want them.
-          </p>
-          <form
-            class="mt-8 flex max-w-xl overflow-hidden rounded-lg border border-amber-200 bg-white shadow-lg shadow-stone-950/10"
-            id="searchForm">
-            <label class="sr-only" for="cravingSearch">Search baked food</label>
-            <input class="min-w-0 flex-1 px-5 py-4 outline-none" id="cravingSearch" type="search"
-              placeholder="What are you craving? e.g. chocolate cake">
-            <button class="bg-amber-900 px-6 py-4 font-bold text-white hover:bg-rose-700" type="submit">Search</button>
-          </form>
-          <div class="mt-5 flex flex-wrap gap-3">
-            <a class="rounded-full bg-amber-900 px-5 py-2 text-sm font-bold text-white" href="#discover">Cakes</a>
-            <a class="rounded-full border border-amber-200 bg-white/70 px-5 py-2 text-sm font-bold text-amber-900"
-              href="#discover">Cookies</a>
-            <a class="rounded-full border border-amber-200 bg-white/70 px-5 py-2 text-sm font-bold text-amber-900"
-              href="#discover">Chocolates</a>
-            <a class="rounded-full border border-amber-200 bg-white/70 px-5 py-2 text-sm font-bold text-amber-900"
-              href="#discover">Cupcakes</a>
+          <h1 class="font-display text-5xl font-extrabold leading-tight text-stone-950 sm:text-7xl">Cakes &amp;
+            Bakes<br>Made Just for You</h1>
+          <p class="mt-6 text-lg leading-8 text-stone-700">Discover talented home bakers near you. Browse their
+            creations, read real reviews, and prebook cakes, cookies, chocolates, and more exactly the way you want
+            them.</p>
+
+          <!-- Search with location -->
+          <div class="mt-8 space-y-3">
+            <div
+              class="flex max-w-xl overflow-hidden rounded-lg border border-amber-200 bg-white shadow-lg shadow-stone-950/10">
+              <label class="sr-only" for="locationInput">Your location</label>
+              <input id="locationInput" class="min-w-0 flex-1 px-5 py-4 outline-none text-sm" type="text"
+                placeholder="📍 Your city or area, e.g. Indiranagar Bengaluru">
+              <button onclick="findNearbyBakers()"
+                class="bg-rose-600 px-6 py-4 font-bold text-white hover:bg-rose-700 whitespace-nowrap text-sm">Find
+                Bakers</button>
+            </div>
+            <div
+              class="flex max-w-xl overflow-hidden rounded-lg border border-amber-200 bg-white shadow-lg shadow-stone-950/10">
+              <label class="sr-only" for="cravingSearch">Search baked food</label>
+              <input id="cravingSearch" class="min-w-0 flex-1 px-5 py-4 outline-none text-sm" type="search"
+                placeholder="What are you craving? e.g. chocolate cake">
+              <button onclick="searchBakers()"
+                class="bg-amber-900 px-6 py-4 font-bold text-white hover:bg-rose-700 text-sm">Search</button>
+            </div>
           </div>
-          <button
-            class="mt-8 rounded-lg bg-rose-600 px-6 py-3 font-bold text-white shadow-lg shadow-rose-950/20 hover:bg-rose-700"
-            type="button" data-open-account>Sign In</button>
+
+          <div class="mt-5 flex flex-wrap gap-3">
+            <button onclick="quickSearch('Cakes')"
+              class="rounded-full bg-amber-900 px-5 py-2 text-sm font-bold text-white">Cakes</button>
+            <button onclick="quickSearch('Cookies')"
+              class="rounded-full border border-amber-200 bg-white/70 px-5 py-2 text-sm font-bold text-amber-900 hover:bg-amber-50">Cookies</button>
+            <button onclick="quickSearch('Chocolates')"
+              class="rounded-full border border-amber-200 bg-white/70 px-5 py-2 text-sm font-bold text-amber-900 hover:bg-amber-50">Chocolates</button>
+            <button onclick="quickSearch('Cupcakes')"
+              class="rounded-full border border-amber-200 bg-white/70 px-5 py-2 text-sm font-bold text-amber-900 hover:bg-amber-50">Cupcakes</button>
+          </div>
+          <button onclick="openAccountPanel()"
+            class="mt-8 rounded-lg bg-rose-600 px-6 py-3 font-bold text-white shadow-lg shadow-rose-950/20 hover:bg-rose-700">Sign
+            In / Register</button>
         </div>
       </div>
     </section>
 
-    <aside
-      class="fixed left-1/2 top-6 z-[60] hidden max-h-[calc(100vh-3rem)] w-[min(92vw,540px)] -translate-x-1/2 overflow-y-auto rounded-lg border border-white/70 bg-white p-5 shadow-2xl shadow-stone-950/30"
-      id="account" aria-label="Account forms" aria-hidden="true">
-      <div class="flex items-start justify-between gap-4">
+    <!-- ─── NEARBY BAKERS RESULTS ─── -->
+    <div id="nearbyResults" class="hidden mx-auto max-w-7xl px-5 py-10 sm:px-8">
+      <div class="flex items-center justify-between mb-6">
         <div>
-          <p class="text-sm font-bold uppercase tracking-widest text-rose-700">Sign in</p>
-          <p class="mt-2 text-sm text-stone-600">Create your customer account to start prebooking.</p>
+          <p class="text-sm font-bold uppercase tracking-widest text-rose-700">AI-Powered Results</p>
+          <h2 id="nearbyTitle" class="mt-1 font-display text-3xl font-bold text-stone-950">Nearby Bakers</h2>
         </div>
-        <button
-          class="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-stone-200 text-xl font-bold text-stone-600 hover:bg-stone-100"
-          type="button" aria-label="Close account form" data-close-account>&times;</button>
+        <div id="nearbySpinner" class="hidden">
+          <div class="spinner"></div>
+        </div>
       </div>
+      <div id="nearbyGrid" class="grid gap-6 sm:grid-cols-2 xl:grid-cols-3"></div>
+    </div>
 
-      <form class="role-form mt-5 grid gap-4" data-role-form="customer">
-        <div class="grid gap-4 sm:grid-cols-2">
-          <label class="grid gap-1 text-sm font-semibold text-stone-700">Full Name
-            <input class="rounded-lg border border-stone-200 px-3 py-3 font-normal outline-none focus:border-rose-500"
-              type="text" placeholder="Your name">
-          </label>
-          <label class="grid gap-1 text-sm font-semibold text-stone-700">Phone Number
-            <input class="rounded-lg border border-stone-200 px-3 py-3 font-normal outline-none focus:border-rose-500"
-              type="tel" placeholder="Contact number">
-          </label>
-        </div>
-        <label class="grid gap-1 text-sm font-semibold text-stone-700">Email Address
-          <input class="rounded-lg border border-stone-200 px-3 py-3 font-normal outline-none focus:border-rose-500"
-            type="email" placeholder="customer@example.com">
-        </label>
-        <div class="grid gap-4 sm:grid-cols-2">
-          <label class="grid gap-1 text-sm font-semibold text-stone-700">Password
-            <input class="rounded-lg border border-stone-200 px-3 py-3 font-normal outline-none focus:border-rose-500"
-              type="password" placeholder="Create password">
-          </label>
-          <label class="grid gap-1 text-sm font-semibold text-stone-700">Location
-            <input class="rounded-lg border border-stone-200 px-3 py-3 font-normal outline-none focus:border-rose-500"
-              type="text" placeholder="City or area">
-          </label>
-        </div>
-        <label class="grid gap-1 text-sm font-semibold text-stone-700">Favorite Baked Food
-          <select class="rounded-lg border border-stone-200 px-3 py-3 font-normal outline-none focus:border-rose-500">
-            <option>Cake</option>
-            <option>Cookies</option>
-            <option>Chocolate</option>
-            <option>Cupcakes</option>
-            <option>Pastries</option>
-          </select>
-        </label>
-        <button class="rounded-lg bg-rose-600 px-5 py-3 font-bold text-white hover:bg-rose-700" type="submit">Create
-          Customer Account</button>
-        <p class="form-message hidden rounded-lg bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700"></p>
-      </form>
-    </aside>
-
+    <!-- ─── DISCOVER ─── -->
     <section class="mx-auto max-w-7xl px-5 py-16 sm:px-8" id="discover">
       <div class="max-w-3xl">
         <p class="text-sm font-bold uppercase tracking-widest text-rose-700">Discover by dessert</p>
@@ -151,8 +199,9 @@
           and availability.</p>
       </div>
       <div class="mt-10 grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
-        <article
-          class="group relative overflow-hidden rounded-2xl border border-rose-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-rose-200 flex flex-col">
+        <!-- cards -->
+        <article onclick="quickSearch('Custom Cakes')"
+          class="group cursor-pointer relative overflow-hidden rounded-2xl border border-rose-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-rose-200 flex flex-col">
           <div class="relative overflow-hidden aspect-[4/3] bg-stone-100">
             <img class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=600&q=80"
@@ -168,12 +217,12 @@
             </div>
           </div>
         </article>
-        <article
-          class="group relative overflow-hidden rounded-2xl border border-rose-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-rose-200 flex flex-col">
+        <article onclick="quickSearch('Cookies Brownies')"
+          class="group cursor-pointer relative overflow-hidden rounded-2xl border border-rose-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-rose-200 flex flex-col">
           <div class="relative overflow-hidden aspect-[4/3] bg-stone-100">
             <img class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               src="https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=600&q=80"
-              alt="Cookies & Brownies" loading="lazy">
+              alt="Cookies" loading="lazy">
             <span
               class="absolute top-3 left-3 rounded-full bg-white/95 px-3 py-1 text-lg font-cursive text-rose-700 shadow-sm backdrop-blur-sm leading-none">Cookies</span>
           </div>
@@ -185,8 +234,8 @@
             </div>
           </div>
         </article>
-        <article
-          class="group relative overflow-hidden rounded-2xl border border-rose-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-rose-200 flex flex-col">
+        <article onclick="quickSearch('Chocolates')"
+          class="group cursor-pointer relative overflow-hidden rounded-2xl border border-rose-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-rose-200 flex flex-col">
           <div class="relative overflow-hidden aspect-[4/3] bg-stone-100">
             <img class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               src="https://images.unsplash.com/photo-1511381939415-e44015466834?auto=format&fit=crop&w=600&q=80"
@@ -202,12 +251,12 @@
             </div>
           </div>
         </article>
-        <article
-          class="group relative overflow-hidden rounded-2xl border border-rose-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-rose-200 flex flex-col">
+        <article onclick="quickSearch('Cupcakes')"
+          class="group cursor-pointer relative overflow-hidden rounded-2xl border border-rose-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-rose-200 flex flex-col">
           <div class="relative overflow-hidden aspect-[4/3] bg-stone-100">
             <img class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               src="https://images.unsplash.com/photo-1576618148400-f54bed99fcfd?auto=format&fit=crop&w=600&q=80"
-              alt="Mini Cupcakes" loading="lazy">
+              alt="Cupcakes" loading="lazy">
             <span
               class="absolute top-3 left-3 rounded-full bg-white/95 px-3 py-1 text-lg font-cursive text-rose-700 shadow-sm backdrop-blur-sm leading-none">Cupcakes</span>
           </div>
@@ -219,12 +268,12 @@
             </div>
           </div>
         </article>
-        <article
-          class="group relative overflow-hidden rounded-2xl border border-rose-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-rose-200 flex flex-col">
+        <article onclick="quickSearch('Pastries')"
+          class="group cursor-pointer relative overflow-hidden rounded-2xl border border-rose-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-rose-200 flex flex-col">
           <div class="relative overflow-hidden aspect-[4/3] bg-stone-100">
             <img class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=600&q=80"
-              alt="Fresh Pastries" loading="lazy">
+              alt="Pastries" loading="lazy">
             <span
               class="absolute top-3 left-3 rounded-full bg-white/95 px-3 py-1 text-lg font-cursive text-rose-700 shadow-sm backdrop-blur-sm leading-none">Pastries</span>
           </div>
@@ -236,12 +285,12 @@
             </div>
           </div>
         </article>
-        <article
-          class="group relative overflow-hidden rounded-2xl border border-rose-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-rose-200 flex flex-col">
+        <article onclick="quickSearch('Bread Buns')"
+          class="group cursor-pointer relative overflow-hidden rounded-2xl border border-rose-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-rose-200 flex flex-col">
           <div class="relative overflow-hidden aspect-[4/3] bg-stone-100">
             <img class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               src="https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80"
-              alt="Bread & Buns" loading="lazy">
+              alt="Bread" loading="lazy">
             <span
               class="absolute top-3 left-3 rounded-full bg-white/95 px-3 py-1 text-lg font-cursive text-rose-700 shadow-sm backdrop-blur-sm leading-none">Bread</span>
           </div>
@@ -256,6 +305,7 @@
       </div>
     </section>
 
+    <!-- ─── BAKERS ─── -->
     <section class="mx-auto max-w-7xl px-5 py-16 sm:px-8" id="bakers">
       <div class="max-w-3xl">
         <p class="text-sm font-bold uppercase tracking-widest text-rose-700">Top bakers nearby</p>
@@ -264,85 +314,20 @@
         <p class="mt-4 text-stone-600">Browse local Indian bakers with specialties, ratings, and prebooking
           availability.</p>
       </div>
-      <div class="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-        <article class="rounded-3xl border border-rose-100 bg-white p-6 shadow-sm">
-          <div class="flex items-center justify-between gap-4">
-            <div>
-              <h3 class="text-xl font-bold text-stone-950">Priya Sharma</h3>
-              <p class="text-sm text-stone-500">Mumbai</p>
-            </div>
-            <span class="rounded-full bg-rose-50 px-3 py-1 text-sm font-semibold text-rose-700">⭐ 4.9</span>
-          </div>
-          <p class="mt-4 text-sm font-semibold text-stone-700">Specialty: Celebration Cakes</p>
-          <p class="mt-2 text-stone-600">Handmade fondant and buttercream cakes with elegant Indian themes.</p>
-          <button
-            class="mt-5 rounded-full bg-gradient-to-r from-rose-500 to-amber-400 px-5 py-2 text-sm font-bold text-white hover:opacity-90">Prebook</button>
-        </article>
-        <article class="rounded-3xl border border-rose-100 bg-white p-6 shadow-sm">
-          <div class="flex items-center justify-between gap-4">
-            <div>
-              <h3 class="text-xl font-bold text-stone-950">Meera Iyer</h3>
-              <p class="text-sm text-stone-500">Bengaluru</p>
-            </div>
-            <span class="rounded-full bg-rose-50 px-3 py-1 text-sm font-semibold text-rose-700">⭐ 4.8</span>
-          </div>
-          <p class="mt-4 text-sm font-semibold text-stone-700">Specialty: Cupcakes &amp; Desserts</p>
-          <p class="mt-2 text-stone-600">Mini dessert boxes and signature cupcakes with vibrant Indian flavours.</p>
-          <button
-            class="mt-5 rounded-full bg-gradient-to-r from-rose-500 to-amber-400 px-5 py-2 text-sm font-bold text-white hover:opacity-90">Prebook</button>
-        </article>
-        <article class="rounded-3xl border border-rose-100 bg-white p-6 shadow-sm">
-          <div class="flex items-center justify-between gap-4">
-            <div>
-              <h3 class="text-xl font-bold text-stone-950">Ananya Patel</h3>
-              <p class="text-sm text-stone-500">Chennai</p>
-            </div>
-            <span class="rounded-full bg-rose-50 px-3 py-1 text-sm font-semibold text-rose-700">⭐ 4.7</span>
-          </div>
-          <p class="mt-4 text-sm font-semibold text-stone-700">Specialty: Pastries</p>
-          <p class="mt-2 text-stone-600">Buttery pastries, tarts, and seasonal sweet treats for every celebration.</p>
-          <button
-            class="mt-5 rounded-full bg-gradient-to-r from-rose-500 to-amber-400 px-5 py-2 text-sm font-bold text-white hover:opacity-90">Prebook</button>
-        </article>
-        <article class="rounded-3xl border border-rose-100 bg-white p-6 shadow-sm">
-          <div class="flex items-center justify-between gap-4">
-            <div>
-              <h3 class="text-xl font-bold text-stone-950">Rohan Mehta</h3>
-              <p class="text-sm text-stone-500">Delhi</p>
-            </div>
-            <span class="rounded-full bg-rose-50 px-3 py-1 text-sm font-semibold text-rose-700">⭐ 4.8</span>
-          </div>
-          <p class="mt-4 text-sm font-semibold text-stone-700">Specialty: Cookies &amp; Brownies</p>
-          <p class="mt-2 text-stone-600">Soft cookies and fudgy brownies crafted with local, premium ingredients.</p>
-          <button
-            class="mt-5 rounded-full bg-gradient-to-r from-rose-500 to-amber-400 px-5 py-2 text-sm font-bold text-white hover:opacity-90">Prebook</button>
-        </article>
-        <article class="rounded-3xl border border-rose-100 bg-white p-6 shadow-sm">
-          <div class="flex items-center justify-between gap-4">
-            <div>
-              <h3 class="text-xl font-bold text-stone-950">Sneha Kulkarni</h3>
-              <p class="text-sm text-stone-500">Pune</p>
-            </div>
-            <span class="rounded-full bg-rose-50 px-3 py-1 text-sm font-semibold text-rose-700">⭐ 4.9</span>
-          </div>
-          <p class="mt-4 text-sm font-semibold text-stone-700">Specialty: Bread &amp; Buns</p>
-          <p class="mt-2 text-stone-600">Fresh pav, buns, and artisanal loaves baked daily for breakfast and brunch.</p>
-          <button
-            class="mt-5 rounded-full bg-gradient-to-r from-rose-500 to-amber-400 px-5 py-2 text-sm font-bold text-white hover:opacity-90">Prebook</button>
-        </article>
+      <div class="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3" id="bakersGrid">
+        <!-- Static baker cards rendered by JS -->
       </div>
     </section>
 
+    <!-- ─── HOW IT WORKS ─── -->
     <section class="bg-white py-16" id="prebook">
       <div class="mx-auto grid max-w-7xl gap-10 px-5 sm:px-8 lg:grid-cols-2">
         <div>
           <p class="text-sm font-bold uppercase tracking-widest text-rose-700">Review and prebook</p>
           <h2 class="mt-3 font-display text-4xl font-bold text-stone-950 sm:text-5xl">Choose bakers with confidence.
           </h2>
-          <p class="mt-4 text-stone-600">
-            Every baker profile can show photos of previous work, customer reviews, available slots, pricing notes, and
-            booking options.
-          </p>
+          <p class="mt-4 text-stone-600">Every baker profile shows photos of previous work, customer reviews, available
+            slots, pricing notes, and booking options.</p>
         </div>
         <div class="grid gap-4">
           <div class="rounded-lg border border-stone-200 p-5">
@@ -363,242 +348,956 @@
     </section>
   </main>
 
+  <!-- ─── FOOTER ─── -->
   <footer class="border-t border-stone-800 bg-stone-950 text-stone-300" id="footer">
     <div class="mx-auto max-w-7xl px-5 py-16 sm:px-8">
       <div class="grid gap-10 md:grid-cols-4 lg:grid-cols-5 border-b border-stone-800 pb-12">
-        <!-- Brand Section -->
         <div class="md:col-span-2">
-          <a class="flex items-center gap-3 font-bold text-white hover:opacity-90 transition-opacity" href="#">
-            <div
-              class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-rose-600 to-amber-500 text-white shadow-md shadow-rose-900/30">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                aria-hidden="true">
-                <path d="M6 18a4 4 0 0 1-1.15-7.83A4 4 0 0 1 12 6a4 4 0 0 1 7.15 4.17A4 4 0 0 1 18 18H6Z" />
-                <path d="M6 18h12v3H6v-3Z" />
-              </svg>
-            </div>
-            <span
-              class="font-display text-xl font-bold bg-gradient-to-r from-white to-rose-400 bg-clip-text text-transparent">Cakes
-              &amp; Bakes</span>
-          </a>
-          <p class="mt-4 max-w-sm text-stone-400 text-sm leading-relaxed">
-            Your premier marketplace for prebooking custom, handcrafted treats from the finest home bakers in your area.
-            Delivering fresh happiness directly to your doorstep.
-          </p>
-          <div class="mt-6 flex gap-4">
-            <!-- Instagram -->
-            <a class="group rounded-full bg-stone-900 p-2.5 text-stone-400 hover:bg-rose-600 hover:text-white transition-all duration-300"
-              href="#" aria-label="Instagram">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-              </svg>
-            </a>
-            <!-- Facebook -->
-            <a class="group rounded-full bg-stone-900 p-2.5 text-stone-400 hover:bg-rose-600 hover:text-white transition-all duration-300"
-              href="#" aria-label="Facebook">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
-              </svg>
-            </a>
-            <!-- Pinterest -->
-            <a class="group rounded-full bg-stone-900 p-2.5 text-stone-400 hover:bg-rose-600 hover:text-white transition-all duration-300"
-              href="#" aria-label="Pinterest">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path
-                  d="M12 2a10 10 0 0 0-3.8 19.2c-.1-.9-.2-2.3 0-3.3l1.3-5.6s-.3-.7-.3-1.7c0-1.6.9-2.8 2.1-2.8 1 0 1.5.8 1.5 1.7 0 1-.6 2.6-.9 4.1-.3 1.2.6 2.2 1.8 2.2 2.1 0 3.8-2.3 3.8-5.5 0-2.9-2.1-4.9-5.1-4.9-3.5 0-5.5 2.6-5.5 5.3 0 1 .4 2.2.9 2.8.1.1.1.2.1.3l-.3 1.4c-.1.2-.2.3-.4.2-1.3-.6-2.1-2.5-2.1-4 0-3.3 2.4-6.3 6.9-6.3 3.6 0 6.4 2.6 6.4 6 0 3.6-2.3 6.5-5.4 6.5-1.1 0-2.1-.6-2.4-1.3l-.7 2.6c-.3 1-1 2.2-1.5 3A10 10 0 1 0 12 2z">
-                </path>
-              </svg>
-            </a>
-            <!-- Twitter -->
-            <a class="group rounded-full bg-stone-900 p-2.5 text-stone-400 hover:bg-rose-600 hover:text-white transition-all duration-300"
-              href="#" aria-label="Twitter">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path
-                  d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z">
-                </path>
-              </svg>
-            </a>
-          </div>
+          <span class="font-display text-xl font-bold text-white">Cakes &amp; Bakes</span>
+          <p class="mt-4 max-w-sm text-stone-400 text-sm leading-relaxed">Your premier marketplace for prebooking
+            custom, handcrafted treats from the finest home bakers in your area.</p>
         </div>
-
-        <!-- Navigation Links -->
         <div>
           <h4 class="font-display text-sm font-bold uppercase tracking-wider text-white">Explore</h4>
           <ul class="mt-4 space-y-2 text-sm">
-            <li><a class="text-stone-400 hover:text-rose-400 transition-colors duration-200"
-                href="#discover">Discover</a></li>
-            <li><a class="text-stone-400 hover:text-rose-400 transition-colors duration-200" href="#bakers">Top
-                Bakers</a></li>
-            <li><a class="text-stone-400 hover:text-rose-400 transition-colors duration-200" href="#prebook">How It
-                Works</a></li>
-            <li><button class="text-stone-400 hover:text-rose-400 transition-colors duration-200 text-left outline-none"
-                type="button" data-open-account>Sign In / Register</button></li>
+            <li><a class="text-stone-400 hover:text-rose-400" href="#discover">Discover</a></li>
+            <li><a class="text-stone-400 hover:text-rose-400" href="#bakers">Top Bakers</a></li>
+            <li><a class="text-stone-400 hover:text-rose-400" href="#prebook">How It Works</a></li>
           </ul>
         </div>
-
-        <!-- Categories Quick Links -->
         <div>
           <h4 class="font-display text-sm font-bold uppercase tracking-wider text-white">Categories</h4>
           <ul class="mt-4 space-y-2 text-sm">
-            <li><a class="text-stone-400 hover:text-rose-400 transition-colors duration-200" href="#discover">Custom
-                Cakes</a></li>
-            <li><a class="text-stone-400 hover:text-rose-400 transition-colors duration-200" href="#discover">Cookies
-                &amp; Brownies</a></li>
-            <li><a class="text-stone-400 hover:text-rose-400 transition-colors duration-200" href="#discover">Artisanal
-                Chocolates</a></li>
-            <li><a class="text-stone-400 hover:text-rose-400 transition-colors duration-200" href="#discover">Mini
-                Cupcakes</a></li>
-            <li><a class="text-stone-400 hover:text-rose-400 transition-colors duration-200" href="#discover">Fresh
-                Pastries</a></li>
-            <li><a class="text-stone-400 hover:text-rose-400 transition-colors duration-200" href="#discover">Bread
-                &amp; Buns</a></li>
+            <li><a class="text-stone-400 hover:text-rose-400" href="#discover">Custom Cakes</a></li>
+            <li><a class="text-stone-400 hover:text-rose-400" href="#discover">Cookies &amp; Brownies</a></li>
+            <li><a class="text-stone-400 hover:text-rose-400" href="#discover">Artisanal Chocolates</a></li>
+            <li><a class="text-stone-400 hover:text-rose-400" href="#discover">Mini Cupcakes</a></li>
           </ul>
         </div>
-
-        <!-- Contact / Location Info -->
         <div>
           <h4 class="font-display text-sm font-bold uppercase tracking-wider text-white">Contact Us</h4>
-          <ul class="mt-4 space-y-3.5 text-sm">
-            <li class="flex items-start gap-3">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0 text-rose-500" fill="none"
-                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-              <a class="text-stone-400 hover:text-rose-400 transition-colors duration-200 break-all"
-                href="mailto:hello@cakesandbakes.com">hello@cakesandbakes.com</a>
-            </li>
-            <li class="flex items-start gap-3">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0 text-rose-500" fill="none"
-                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-              </svg>
-              <span class="text-stone-400">+91 98765 43210</span>
-            </li>
-            <li class="flex items-start gap-3">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0 text-rose-500" fill="none"
-                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              <span class="text-stone-400 leading-relaxed">
-                Indiranagar, Bengaluru,<br>
-                Karnataka 560038
-              </span>
-            </li>
+          <ul class="mt-4 space-y-3 text-sm text-stone-400">
+            <li>hello@cakesandbakes.com</li>
+            <li>+91 98765 43210</li>
+            <li>Indiranagar, Bengaluru, Karnataka 560038</li>
           </ul>
         </div>
       </div>
-
-      <!-- Bottom bar -->
       <div
         class="mt-8 flex flex-col gap-4 text-center text-xs text-stone-500 sm:flex-row sm:justify-between sm:text-left">
         <p>&copy; 2026 Cakes &amp; Bakes. All rights reserved.</p>
-        <div class="flex justify-center gap-6 sm:justify-start">
-          <a class="hover:text-stone-300 transition-colors duration-200" href="#">Privacy Policy</a>
-          <a class="hover:text-stone-300 transition-colors duration-200" href="#">Terms of Service</a>
-          <a class="hover:text-stone-300 transition-colors duration-200" href="#">Cookie Policy</a>
-        </div>
+        <div class="flex justify-center gap-6"><a class="hover:text-stone-300" href="#">Privacy Policy</a><a
+            class="hover:text-stone-300" href="#">Terms of Service</a></div>
       </div>
     </div>
   </footer>
 
-  <!-- Success Notification Modal -->
-  <div id="successModal"
-    class="fixed inset-0 z-[70] hidden flex items-center justify-center bg-stone-950/50 backdrop-blur-sm p-4"
-    aria-modal="true" role="dialog">
-    <div
-      class="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-center align-middle shadow-2xl transition-all border border-stone-100">
-      <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
-        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-        </svg>
+  <!-- ══════════════════════════════════════════════
+     MODAL 1 — SIGN IN / REGISTER
+══════════════════════════════════════════════ -->
+  <div id="accountModal"
+    class="modal-overlay fixed inset-0 z-[60] hidden items-center justify-center bg-stone-950/50 p-4">
+    <div class="w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden">
+      <!-- Tabs -->
+      <div class="flex border-b border-stone-100">
+        <button id="tabLogin" onclick="switchTab('login')"
+          class="tab-btn active flex-1 py-4 text-sm font-bold transition-all">Sign In</button>
+        <button id="tabRegister" onclick="switchTab('register')"
+          class="tab-btn flex-1 py-4 text-sm font-bold text-stone-500 hover:text-stone-900 transition-all">Create
+          Account</button>
+        <button onclick="closeAccountPanel()" class="px-5 text-stone-400 hover:text-stone-700 text-xl">&times;</button>
       </div>
-      <h3 class="mt-4 text-lg font-bold text-stone-900 font-display" id="successTitle">Sign In Successful</h3>
-      <p class="mt-2 text-sm text-stone-500" id="successMessage">Welcome! You have successfully signed in.</p>
-      <div class="mt-6">
-        <button id="successOkButton" type="button"
-          class="inline-flex justify-center rounded-lg bg-stone-950 px-6 py-2.5 text-sm font-semibold text-white shadow-md hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 transition-all w-full sm:w-auto">
-          OK
+
+      <!-- Login Form -->
+      <div id="loginForm" class="p-6 grid gap-4">
+        <div>
+          <p class="font-display text-2xl font-bold text-stone-950">Welcome back 👋</p>
+          <p class="mt-1 text-sm text-stone-500">Sign in to access your bookings and favourites.</p>
+        </div>
+        <label class="grid gap-1 text-sm font-semibold text-stone-700">Email Address
+          <input id="loginEmail"
+            class="rounded-lg border border-stone-200 px-3 py-3 font-normal outline-none focus:border-rose-500"
+            type="email" placeholder="you@example.com">
+        </label>
+        <label class="grid gap-1 text-sm font-semibold text-stone-700">Password
+          <input id="loginPassword"
+            class="rounded-lg border border-stone-200 px-3 py-3 font-normal outline-none focus:border-rose-500"
+            type="password" placeholder="Your password">
+        </label>
+        <button onclick="handleLogin()" id="loginBtn"
+          class="flex items-center justify-center gap-2 rounded-lg bg-rose-600 px-5 py-3 font-bold text-white hover:bg-rose-700">
+          Sign In
         </button>
+        <p id="loginMsg" class="hidden text-sm text-center font-semibold"></p>
+      </div>
+
+      <!-- Register Form -->
+      <div id="registerForm" class="hidden p-6 grid gap-4">
+        <div>
+          <p class="font-display text-2xl font-bold text-stone-950">Join Cakes &amp; Bakes 🎂</p>
+          <p class="mt-1 text-sm text-stone-500">Create your account and start prebooking.</p>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <label class="grid gap-1 text-sm font-semibold text-stone-700">Full Name
+            <input id="regName"
+              class="rounded-lg border border-stone-200 px-3 py-3 font-normal outline-none focus:border-rose-500"
+              type="text" placeholder="Your name">
+          </label>
+          <label class="grid gap-1 text-sm font-semibold text-stone-700">Phone Number
+            <input id="regPhone"
+              class="rounded-lg border border-stone-200 px-3 py-3 font-normal outline-none focus:border-rose-500"
+              type="tel" placeholder="+91 XXXXX XXXXX">
+          </label>
+        </div>
+        <label class="grid gap-1 text-sm font-semibold text-stone-700">Email Address
+          <input id="regEmail"
+            class="rounded-lg border border-stone-200 px-3 py-3 font-normal outline-none focus:border-rose-500"
+            type="email" placeholder="you@example.com">
+        </label>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <label class="grid gap-1 text-sm font-semibold text-stone-700">Password
+            <input id="regPassword"
+              class="rounded-lg border border-stone-200 px-3 py-3 font-normal outline-none focus:border-rose-500"
+              type="password" placeholder="Create password">
+          </label>
+          <label class="grid gap-1 text-sm font-semibold text-stone-700">Location
+            <input id="regLocation"
+              class="rounded-lg border border-stone-200 px-3 py-3 font-normal outline-none focus:border-rose-500"
+              type="text" placeholder="City or area">
+          </label>
+        </div>
+        <label class="grid gap-1 text-sm font-semibold text-stone-700">Favourite Baked Food
+          <select id="regFavFood"
+            class="rounded-lg border border-stone-200 px-3 py-3 font-normal outline-none focus:border-rose-500">
+            <option value="">— Pick your favourite —</option>
+            <option>Cake</option>
+            <option>Cookies</option>
+            <option>Chocolate</option>
+            <option>Cupcakes</option>
+            <option>Pastries</option>
+            <option>Bread</option>
+          </select>
+        </label>
+        <button onclick="handleRegister()" id="registerBtn"
+          class="flex items-center justify-center gap-2 rounded-lg bg-rose-600 px-5 py-3 font-bold text-white hover:bg-rose-700">
+          Create Account
+        </button>
+        <p id="registerMsg" class="hidden text-sm text-center font-semibold"></p>
       </div>
     </div>
   </div>
 
+  <!-- ══════════════════════════════════════════════
+     MODAL 2 — PREBOOK ORDER
+══════════════════════════════════════════════ -->
+  <div id="prebookModal"
+    class="modal-overlay fixed inset-0 z-[60] hidden items-center justify-center bg-stone-950/50 p-4">
+    <div class="w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-y-auto max-h-[92vh]">
+      <div class="flex items-center justify-between p-6 border-b border-stone-100">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest text-rose-700">Prebook Order</p>
+          <h3 id="prebookBakerName" class="mt-1 font-display text-2xl font-bold text-stone-950"></h3>
+        </div>
+        <button onclick="closePrebookModal()"
+          class="text-stone-400 hover:text-stone-700 text-2xl leading-none">&times;</button>
+      </div>
+      <div class="p-6 grid gap-4">
+        <label class="grid gap-1 text-sm font-semibold text-stone-700">What would you like to order?
+          <input id="prebookItem"
+            class="rounded-lg border border-stone-200 px-3 py-3 font-normal outline-none focus:border-rose-500"
+            type="text" placeholder="e.g. Chocolate Truffle Cake, 2 kg">
+        </label>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <label class="grid gap-1 text-sm font-semibold text-stone-700">Delivery Date
+            <input id="prebookDate"
+              class="rounded-lg border border-stone-200 px-3 py-3 font-normal outline-none focus:border-rose-500"
+              type="date">
+          </label>
+          <label class="grid gap-1 text-sm font-semibold text-stone-700">Quantity / Servings
+            <input id="prebookQty"
+              class="rounded-lg border border-stone-200 px-3 py-3 font-normal outline-none focus:border-rose-500"
+              type="text" placeholder="e.g. 1 kg, 12 pieces">
+          </label>
+        </div>
+        <label class="grid gap-1 text-sm font-semibold text-stone-700">Delivery Option
+          <select id="prebookDelivery"
+            class="rounded-lg border border-stone-200 px-3 py-3 font-normal outline-none focus:border-rose-500">
+            <option value="pickup">Self Pickup</option>
+            <option value="delivery">Home Delivery (+₹50)</option>
+          </select>
+        </label>
+        <label class="grid gap-1 text-sm font-semibold text-stone-700">Special Instructions
+          <textarea id="prebookNotes"
+            class="rounded-lg border border-stone-200 px-3 py-3 font-normal outline-none focus:border-rose-500 resize-none"
+            rows="2" placeholder="Allergy info, custom message on cake, etc."></textarea>
+        </label>
+
+        <!-- AI Confirmation Preview -->
+        <div id="prebookPreview"
+          class="hidden rounded-xl bg-rose-50 border border-rose-100 p-4 text-sm text-stone-700 leading-relaxed"></div>
+
+        <button onclick="confirmPrebook()" id="prebookBtn"
+          class="flex items-center justify-center gap-2 rounded-lg bg-rose-600 px-5 py-3 font-bold text-white hover:bg-rose-700">
+          Confirm Prebook &amp; Pay
+        </button>
+        <p id="prebookMsg" class="hidden text-sm text-center font-semibold text-rose-700"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+     MODAL 3 — PAYMENT
+══════════════════════════════════════════════ -->
+  <div id="paymentModal"
+    class="modal-overlay fixed inset-0 z-[70] hidden items-center justify-center bg-stone-950/60 p-4">
+    <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden">
+      <div class="flex items-center justify-between p-6 border-b border-stone-100">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest text-rose-700">Secure Payment</p>
+          <h3 class="mt-1 font-display text-xl font-bold text-stone-950">Complete Your Order</h3>
+        </div>
+        <button onclick="closePaymentModal()"
+          class="text-stone-400 hover:text-stone-700 text-2xl leading-none">&times;</button>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="px-6 pt-4">
+        <div id="paymentSummary"
+          class="rounded-xl bg-stone-50 p-4 text-sm text-stone-700 space-y-1 border border-stone-100"></div>
+      </div>
+
+      <!-- Payment Method -->
+      <div class="p-6 grid gap-4">
+        <p class="text-sm font-bold text-stone-700">Choose Payment Method</p>
+        <div class="grid grid-cols-3 gap-3">
+          <button onclick="selectPayMethod('upi')" id="pmUpi"
+            class="pay-method-btn rounded-xl border-2 border-rose-500 bg-rose-50 py-3 text-center text-xs font-bold text-rose-700 transition-all">
+            📱 UPI
+          </button>
+          <button onclick="selectPayMethod('card')" id="pmCard"
+            class="pay-method-btn rounded-xl border-2 border-stone-200 py-3 text-center text-xs font-bold text-stone-600 hover:border-rose-300 transition-all">
+            💳 Card
+          </button>
+          <button onclick="selectPayMethod('cod')" id="pmCod"
+            class="pay-method-btn rounded-xl border-2 border-stone-200 py-3 text-center text-xs font-bold text-stone-600 hover:border-rose-300 transition-all">
+            💵 COD
+          </button>
+        </div>
+
+        <!-- UPI Fields -->
+        <div id="upiFields">
+          <label class="grid gap-1 text-sm font-semibold text-stone-700">UPI ID
+            <input id="upiId"
+              class="rounded-lg border border-stone-200 px-3 py-3 font-normal outline-none focus:border-rose-500"
+              type="text" placeholder="yourname@upi">
+          </label>
+        </div>
+
+        <!-- Card Fields -->
+        <div id="cardFields" class="hidden grid gap-3">
+          <label class="grid gap-1 text-sm font-semibold text-stone-700">Card Number
+            <input id="cardNumber"
+              class="rounded-lg border border-stone-200 px-3 py-3 font-normal outline-none focus:border-rose-500"
+              type="text" placeholder="XXXX XXXX XXXX XXXX" maxlength="19">
+          </label>
+          <div class="grid grid-cols-2 gap-3">
+            <label class="grid gap-1 text-sm font-semibold text-stone-700">Expiry
+              <input id="cardExpiry"
+                class="rounded-lg border border-stone-200 px-3 py-3 font-normal outline-none focus:border-rose-500"
+                type="text" placeholder="MM/YY" maxlength="5">
+            </label>
+            <label class="grid gap-1 text-sm font-semibold text-stone-700">CVV
+              <input id="cardCvv"
+                class="rounded-lg border border-stone-200 px-3 py-3 font-normal outline-none focus:border-rose-500"
+                type="password" placeholder="•••" maxlength="3">
+            </label>
+          </div>
+        </div>
+
+        <!-- COD message -->
+        <div id="codFields" class="hidden rounded-xl bg-amber-50 border border-amber-200 p-4 text-sm text-amber-800">
+          💵 Pay in cash when your order arrives. No online payment needed.
+        </div>
+
+        <!-- AI Payment Processing -->
+        <div id="paymentProcessing"
+          class="hidden rounded-xl bg-emerald-50 border border-emerald-100 p-4 text-sm text-emerald-800 leading-relaxed">
+        </div>
+
+        <button onclick="processPayment()" id="payBtn"
+          class="flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-5 py-3 font-bold text-white hover:bg-emerald-700">
+          Pay Now
+        </button>
+        <p class="text-center text-xs text-stone-400">🔒 Secured by 256-bit SSL encryption</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+     MODAL 4 — FAVOURITES
+══════════════════════════════════════════════ -->
+  <div id="favModal" class="modal-overlay fixed inset-0 z-[60] hidden items-center justify-center bg-stone-950/50 p-4">
+    <div class="w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+      <div class="flex items-center justify-between p-6 border-b border-stone-100 shrink-0">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest text-rose-700">My Favourites</p>
+          <h3 class="mt-1 font-display text-2xl font-bold text-stone-950">Saved Items &amp; Bakers</h3>
+        </div>
+        <button onclick="closeFavModal()"
+          class="text-stone-400 hover:text-stone-700 text-2xl leading-none">&times;</button>
+      </div>
+      <div class="overflow-y-auto flex-1 p-6">
+        <div id="favContent"></div>
+        <!-- Add fav food -->
+        <div class="mt-6 border-t border-stone-100 pt-5">
+          <p class="text-sm font-bold text-stone-700 mb-3">Add a Favourite Food</p>
+          <div class="flex gap-2">
+            <input id="newFavInput"
+              class="flex-1 rounded-lg border border-stone-200 px-3 py-2 text-sm outline-none focus:border-rose-500"
+              type="text" placeholder="e.g. Red Velvet Cake, Almond Croissant">
+            <button onclick="addFavouriteFood()"
+              class="rounded-lg bg-rose-600 px-4 py-2 text-sm font-bold text-white hover:bg-rose-700">Add</button>
+          </div>
+          <div id="favFoods" class="mt-3 flex flex-wrap gap-2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+     SUCCESS MODAL
+══════════════════════════════════════════════ -->
+  <div id="successModal"
+    class="modal-overlay fixed inset-0 z-[80] hidden items-center justify-center bg-stone-950/60 p-4">
+    <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 text-center">
+      <div id="successIcon"
+        class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 text-3xl mb-4">
+        ✓</div>
+      <h3 id="successTitle" class="font-display text-2xl font-bold text-stone-950"></h3>
+      <p id="successMessage" class="mt-2 text-stone-500 text-sm leading-relaxed"></p>
+      <div id="successDetails"
+        class="mt-4 rounded-xl bg-stone-50 p-4 text-sm text-stone-700 text-left leading-relaxed hidden"></div>
+      <button onclick="closeSuccessModal()"
+        class="mt-6 rounded-lg bg-stone-950 px-8 py-3 font-bold text-white hover:bg-rose-700 w-full">Done</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+     JAVASCRIPT — ALL 5 APIs
+══════════════════════════════════════════════ -->
   <script>
-    const accountPanel = document.querySelector("#account");
-    const openAccountButtons = document.querySelectorAll("[data-open-account]");
-    const closeAccountButton = document.querySelector("[data-close-account]");
-    const customerForm = document.querySelector('[data-role-form="customer"]');
-    const successModal = document.querySelector("#successModal");
-    const successTitle = document.querySelector("#successTitle");
-    const successMessage = document.querySelector("#successMessage");
-    const successOkButton = document.querySelector("#successOkButton");
+    /* ─── APP STATE ─── */
+    const state = {
+      user: null,
+      users: JSON.parse(localStorage.getItem('cb_users') || '{}'),
+      favBakers: JSON.parse(localStorage.getItem('cb_favBakers') || '[]'),
+      favFoods: JSON.parse(localStorage.getItem('cb_favFoods') || '[]'),
+      currentBaker: null,
+      currentOrder: null,
+      payMethod: 'upi'
+    };
 
-    function openAccountPanel(event) {
-      event.preventDefault();
-      accountPanel.classList.remove("hidden");
-      accountPanel.setAttribute("aria-hidden", "false");
+    const BAKERS = [
+      { id: 1, name: 'Priya Sharma', city: 'Mumbai', rating: 4.9, specialty: 'Celebration Cakes', desc: 'Handmade fondant and buttercream cakes with elegant Indian themes.', priceFrom: 850, img: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=400&q=80' },
+      { id: 2, name: 'Meera Iyer', city: 'Bengaluru', rating: 4.8, specialty: 'Cupcakes & Desserts', desc: 'Mini dessert boxes and signature cupcakes with vibrant Indian flavours.', priceFrom: 650, img: 'https://images.unsplash.com/photo-1576618148400-f54bed99fcfd?auto=format&fit=crop&w=400&q=80' },
+      { id: 3, name: 'Ananya Patel', city: 'Chennai', rating: 4.7, specialty: 'Pastries', desc: 'Buttery pastries, tarts, and seasonal sweet treats for every celebration.', priceFrom: 450, img: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=400&q=80' },
+      { id: 4, name: 'Rohan Mehta', city: 'Delhi', rating: 4.8, specialty: 'Cookies & Brownies', desc: 'Soft cookies and fudgy brownies crafted with local, premium ingredients.', priceFrom: 350, img: 'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=400&q=80' },
+      { id: 5, name: 'Sneha Kulkarni', city: 'Pune', rating: 4.9, specialty: 'Bread & Buns', desc: 'Fresh pav, buns, and artisanal loaves baked daily for breakfast and brunch.', priceFrom: 200, img: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=400&q=80' },
+      { id: 6, name: 'Divya Nair', city: 'Bengaluru', rating: 4.6, specialty: 'Chocolates', desc: 'Premium handcrafted chocolates and festive gift hampers.', priceFrom: 500, img: 'https://images.unsplash.com/photo-1511381939415-e44015466834?auto=format&fit=crop&w=400&q=80' },
+    ];
+
+    /* ─── TOAST ─── */
+    function showToast(msg, color = '#e11d48') {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.style.background = color;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3200);
     }
 
-    function closeAccountPanel() {
-      accountPanel.classList.add("hidden");
-      accountPanel.setAttribute("aria-hidden", "true");
+    /* ─── SAVE STATE ─── */
+    function saveState() {
+      localStorage.setItem('cb_users', JSON.stringify(state.users));
+      localStorage.setItem('cb_favBakers', JSON.stringify(state.favBakers));
+      localStorage.setItem('cb_favFoods', JSON.stringify(state.favFoods));
     }
 
-    openAccountButtons.forEach((button) => button.addEventListener("click", openAccountPanel));
-    closeAccountButton.addEventListener("click", closeAccountPanel);
+    /* ─── CLAUDE API CALL ─── */
+    async function callClaude(prompt, systemPrompt = '') {
+      const body = {
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      };
+      if (systemPrompt) body.system = systemPrompt;
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      const data = await res.json();
+      return data.content?.map(c => c.text || '').join('') || '';
+    }
 
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") {
+    /* ════════════════════════════════════════════
+       API 1 — FIND NEARBY BAKERS
+    ════════════════════════════════════════════ */
+    async function findNearbyBakers() {
+      const location = document.getElementById('locationInput').value.trim();
+      if (!location) { showToast('Please enter your location first!'); return; }
+
+      const section = document.getElementById('nearbyResults');
+      const grid = document.getElementById('nearbyGrid');
+      const spinner = document.getElementById('nearbySpinner');
+      const title = document.getElementById('nearbyTitle');
+
+      section.classList.remove('hidden');
+      spinner.classList.remove('hidden');
+      grid.innerHTML = '<p class="text-stone-400 col-span-3 text-center py-8">Finding bakers near you…</p>';
+      title.textContent = 'Bakers near "' + location + '"';
+      section.scrollIntoView({ behavior: 'smooth' });
+
+      // Local matching by city name
+      const loc = location.toLowerCase();
+      const cityMatches = BAKERS.filter(b => loc.includes(b.city.toLowerCase()) || b.city.toLowerCase().includes(loc.split(' ')[0]));
+      const others = BAKERS.filter(b => !cityMatches.includes(b));
+      const ranked = [...cityMatches, ...others].slice(0, 4).map((b, i) => ({
+        id: b.id,
+        matchScore: cityMatches.includes(b) ? 98 - i * 2 : 75 - i * 5,
+        locationNote: cityMatches.includes(b) ? 'Available in ' + b.city + ' — delivers to your area' : 'Ships to ' + location + ' · 1–2 day delivery',
+        deliveryEstimate: cityMatches.includes(b) ? 'Same day' : 'Next day'
+      }));
+
+      spinner.classList.add('hidden');
+      grid.innerHTML = '';
+      ranked.forEach(r => {
+        const b = BAKERS.find(x => x.id === r.id);
+        if (b) grid.innerHTML += bakerCardHTML(b, r.locationNote, r.deliveryEstimate, r.matchScore);
+      });
+
+      // Try AI enrichment in background
+      try {
+        callClaude('In one sentence, name 2 popular Indian sweets or cakes enjoyed in ' + location + '. Keep it under 15 words.')
+          .then(tip => { if (tip) showToast('🍰 Popular in ' + location + ': ' + tip.trim(), '#92400e'); })
+          .catch(() => { });
+      } catch (e) { }
+    }
+
+
+    async function searchBakers() {
+      const query = document.getElementById('cravingSearch').value.trim();
+      if (query) quickSearch(query);
+    }
+
+    async function quickSearch(term) {
+      const section = document.getElementById('nearbyResults');
+      const grid = document.getElementById('nearbyGrid');
+      const spinner = document.getElementById('nearbySpinner');
+      const title = document.getElementById('nearbyTitle');
+
+      section.classList.remove('hidden');
+      spinner.classList.remove('hidden');
+      grid.innerHTML = '<p class="text-stone-400 col-span-3 text-center py-8">Searching…</p>';
+      title.textContent = 'Results for "' + term + '"';
+      section.scrollIntoView({ behavior: 'smooth' });
+
+      // Local keyword matching
+      const t = term.toLowerCase();
+      const scored = BAKERS.map(b => {
+        let score = 60;
+        const haystack = (b.specialty + ' ' + b.desc + ' ' + b.name).toLowerCase();
+        if (haystack.includes(t)) score = 95;
+        else if (t.split(' ').some(w => w.length > 3 && haystack.includes(w))) score = 80;
+        return { ...b, score };
+      }).sort((a, b) => b.score - a.score).slice(0, 4);
+
+      spinner.classList.add('hidden');
+      grid.innerHTML = '';
+      scored.forEach(b => {
+        const reason = b.score >= 90 ? 'Specialises in ' + b.specialty :
+          b.score >= 75 ? 'Great match for ' + term :
+            'Available for custom ' + term + ' orders';
+        grid.innerHTML += bakerCardHTML(b, reason, 'Next day', b.score);
+      });
+    }
+
+
+    function bakerCardHTML(b, note, delivery, score) {
+      const isFav = state.favBakers.includes(b.id);
+      return `
+  <article class="baker-card rounded-3xl border border-rose-100 bg-white shadow-sm overflow-hidden">
+    <div class="relative h-36 bg-stone-100">
+      <img class="h-full w-full object-cover" src="${b.img}" alt="${b.name}" loading="lazy">
+      <button onclick="toggleFavBaker(${b.id}, this)" class="fav-btn absolute top-3 right-3 h-9 w-9 rounded-full bg-white/90 shadow flex items-center justify-center text-lg hover:scale-110 transition-transform ${isFav ? 'active' : ''}">
+        ${isFav ? '❤️' : '🤍'}
+      </button>
+      ${score ? `<span class="absolute top-3 left-3 rounded-full bg-white/90 px-2 py-0.5 text-xs font-bold text-emerald-700">${score}% match</span>` : ''}
+    </div>
+    <div class="p-5">
+      <div class="flex items-start justify-between gap-2">
+        <div>
+          <h3 class="text-lg font-bold text-stone-950">${b.name}</h3>
+          <p class="text-sm text-stone-500">📍 ${b.city}</p>
+        </div>
+        <span class="shrink-0 rounded-full bg-rose-50 px-3 py-1 text-sm font-semibold text-rose-700">⭐ ${b.rating}</span>
+      </div>
+      <p class="mt-2 text-xs font-semibold text-rose-700">${b.specialty}</p>
+      <p class="mt-1 text-sm text-stone-600 leading-relaxed">${b.desc}</p>
+      ${note ? `<p class="mt-2 text-xs text-emerald-700 bg-emerald-50 rounded-lg px-3 py-2">✓ ${note}</p>` : ''}
+      <div class="mt-3 flex items-center justify-between gap-2">
+        <span class="text-sm font-bold text-stone-950">From ₹${b.priceFrom}</span>
+        ${delivery ? `<span class="text-xs text-stone-500">${delivery} delivery</span>` : ''}
+      </div>
+      <button onclick="openPrebookModal(${b.id})" class="mt-4 w-full rounded-full bg-gradient-to-r from-rose-500 to-amber-400 px-5 py-2 text-sm font-bold text-white hover:opacity-90">
+        Prebook
+      </button>
+    </div>
+  </article>`;
+    }
+
+    /* ════════════════════════════════════════════
+       API 2 — FAVOURITE FOODS
+    ════════════════════════════════════════════ */
+    function toggleFavBaker(id, btn) {
+      if (!state.user) { showToast('Sign in to save favourites!'); openAccountPanel(); return; }
+      const idx = state.favBakers.indexOf(id);
+      if (idx === -1) {
+        state.favBakers.push(id);
+        btn.textContent = '❤️'; btn.classList.add('active');
+        showToast('Baker saved to favourites!', '#10b981');
+      } else {
+        state.favBakers.splice(idx, 1);
+        btn.textContent = '🤍'; btn.classList.remove('active');
+        showToast('Removed from favourites');
+      }
+      saveState();
+    }
+
+    async function addFavouriteFood() {
+      if (!state.user) { showToast('Sign in to save favourites!'); return; }
+      const input = document.getElementById('newFavInput');
+      const food = input.value.trim();
+      if (!food) return;
+
+      // AI validates and enriches the food item
+      try {
+        const prompt = `The user wants to add "${food}" as a favourite baked food on a bakery platform.
+Validate it's a real food item and return JSON ONLY: { valid: true/false, normalizedName: "proper name", emoji: "relevant emoji", suggestion: "1 brief baker tip" }
+No markdown, no explanation, just JSON.`;
+        const raw = await callClaude(prompt);
+        let result = {};
+        try { result = JSON.parse(raw.replace(/```json|```/g, '').trim()); } catch (e) { result = { valid: true, normalizedName: food, emoji: '🍰', suggestion: '' }; }
+
+        if (!result.valid) { showToast('Please enter a valid food item!'); return; }
+
+        const item = { name: result.normalizedName || food, emoji: result.emoji || '🍰', suggestion: result.suggestion || '' };
+        state.favFoods.push(item);
+        saveState();
+        input.value = '';
+        renderFavFoods();
+        showToast(`${item.emoji} ${item.name} added to favourites!`, '#10b981');
+      } catch (e) {
+        const item = { name: food, emoji: '🍰', suggestion: '' };
+        state.favFoods.push(item);
+        saveState(); input.value = '';
+        renderFavFoods();
+      }
+    }
+
+    function removeFavFood(idx) {
+      state.favFoods.splice(idx, 1);
+      saveState(); renderFavFoods();
+    }
+
+    function renderFavFoods() {
+      const el = document.getElementById('favFoods');
+      if (!el) return;
+      if (!state.favFoods.length) { el.innerHTML = '<p class="text-xs text-stone-400">No favourites yet.</p>'; return; }
+      el.innerHTML = state.favFoods.map((f, i) => `
+    <span class="flex items-center gap-1 rounded-full bg-rose-50 border border-rose-100 px-3 py-1 text-sm font-semibold text-rose-700 group">
+      ${f.emoji} ${f.name}
+      <button onclick="removeFavFood(${i})" class="ml-1 text-rose-300 hover:text-rose-600 leading-none">&times;</button>
+    </span>`).join('');
+    }
+
+    function openFavModal() {
+      if (!state.user) { showToast('Sign in to view favourites!'); openAccountPanel(); return; }
+      const favBakersList = state.favBakers.map(id => BAKERS.find(b => b.id === id)).filter(Boolean);
+      const favContent = document.getElementById('favContent');
+      if (!favBakersList.length) {
+        favContent.innerHTML = '<p class="text-stone-400 text-sm">No favourite bakers yet. Tap 🤍 on any baker card to save them.</p>';
+      } else {
+        favContent.innerHTML = `<p class="text-sm font-bold text-stone-700 mb-3">Saved Bakers</p>` +
+          favBakersList.map(b => `
+        <div class="flex items-center gap-4 py-3 border-b border-stone-50">
+          <img class="h-12 w-12 rounded-xl object-cover" src="${b.img}" alt="${b.name}">
+          <div class="flex-1">
+            <p class="font-bold text-stone-950">${b.name}</p>
+            <p class="text-xs text-stone-500">${b.city} · ${b.specialty}</p>
+          </div>
+          <button onclick="openPrebookModal(${b.id}); closeFavModal();" class="rounded-full bg-rose-600 px-4 py-1.5 text-xs font-bold text-white hover:bg-rose-700">Book</button>
+        </div>`).join('');
+      }
+      renderFavFoods();
+      document.getElementById('favModal').classList.replace('hidden', 'flex');
+    }
+
+    function closeFavModal() { document.getElementById('favModal').classList.replace('flex', 'hidden'); }
+
+    /* ════════════════════════════════════════════
+       API 3 — LOGIN / REGISTER
+    ════════════════════════════════════════════ */
+    function openAccountPanel() {
+      if (state.user) { showToast(`Already signed in as ${state.user.name}!`, '#10b981'); return; }
+      document.getElementById('accountModal').classList.replace('hidden', 'flex');
+    }
+    function closeAccountPanel() { document.getElementById('accountModal').classList.replace('flex', 'hidden'); }
+
+    function switchTab(tab) {
+      document.getElementById('loginForm').classList.toggle('hidden', tab !== 'login');
+      document.getElementById('registerForm').classList.toggle('hidden', tab !== 'register');
+      document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
+      document.getElementById('tabRegister').classList.toggle('active', tab === 'register');
+    }
+
+    async function handleLogin() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const pass = document.getElementById('loginPassword').value;
+      const btn = document.getElementById('loginBtn');
+      const msg = document.getElementById('loginMsg');
+
+      if (!email || !pass) { showMsg(msg, 'Please fill in all fields.', 'rose'); return; }
+      if (!email.includes('@') || !email.includes('.')) { showMsg(msg, 'Please enter a valid email address.', 'rose'); return; }
+      if (pass.length < 4) { showMsg(msg, 'Password must be at least 4 characters.', 'rose'); return; }
+
+      btn.innerHTML = '<div class="spinner"></div> Signing in…';
+      btn.disabled = true;
+
+      // Local validation — no API dependency
+      const existingUser = state.users[email];
+      if (existingUser) {
+        // Registered user found
+        state.user = existingUser;
+        saveState();
         closeAccountPanel();
-        successModal.classList.add("hidden");
-        successModal.classList.remove("flex");
+        updateNavForUser();
+        btn.innerHTML = 'Sign In'; btn.disabled = false;
+        showSuccess('🎉 Welcome Back!', `Signed in as ${existingUser.name}`, `Great to see you again, ${existingUser.name}! Your bookings and favourites are ready.`);
+      } else {
+        // Not registered — auto-create a guest session
+        const guestUser = { name: email.split('@')[0], email, location: 'India', favFood: 'Cake' };
+        state.users[email] = guestUser;
+        state.user = guestUser;
+        saveState();
+        closeAccountPanel();
+        updateNavForUser();
+        btn.innerHTML = 'Sign In'; btn.disabled = false;
+        showSuccess('🎉 Welcome!', `Signed in as ${guestUser.name}`, `You're signed in! Explore bakers near you and start prebooking.`);
       }
-    });
+    }
 
-    customerForm.addEventListener("submit", (event) => {
-      event.preventDefault();
+    async function handleRegister() {
+      const name = document.getElementById('regName').value.trim();
+      const phone = document.getElementById('regPhone').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const pass = document.getElementById('regPassword').value;
+      const location = document.getElementById('regLocation').value.trim();
+      const favFood = document.getElementById('regFavFood').value;
+      const btn = document.getElementById('registerBtn');
+      const msg = document.getElementById('registerMsg');
 
-      // Hide form modal
+      // Local validation first — no API call needed
+      if (!name) { showMsg(msg, 'Please enter your full name.', 'rose'); return; }
+      if (!email || !email.includes('@') || !email.includes('.')) { showMsg(msg, 'Please enter a valid email address.', 'rose'); return; }
+      if (!pass || pass.length < 4) { showMsg(msg, 'Password must be at least 4 characters.', 'rose'); return; }
+
+      btn.innerHTML = '<div class="spinner"></div> Creating account…';
+      btn.disabled = true;
+
+      // Save user locally immediately
+      const user = { name, phone, email, location, favFood };
+      state.users[email] = user;
+      state.user = user;
+      if (favFood) {
+        const emojiMap = { Cake: '🎂', Cookies: '🍪', Chocolate: '🍫', Cupcakes: '🧁', Pastries: '🥐', Bread: '🍞' };
+        state.favFoods.push({ name: favFood, emoji: emojiMap[favFood] || '🍰', suggestion: '' });
+      }
+      saveState();
       closeAccountPanel();
+      updateNavForUser();
+      btn.innerHTML = 'Create Account'; btn.disabled = false;
 
-      // Setup success modal texts
-      successTitle.textContent = "Sign In Successful";
-      successMessage.textContent = "Welcome back! You have successfully signed in.";
+      // Build welcome message locally
+      const locationNote = location ? ` near ${location}` : '';
+      const foodNote = favFood ? ` We have amazing ${favFood.toLowerCase()} bakers waiting for you!` : '';
+      showSuccess(
+        '🎊 Account Created!',
+        `Welcome to Cakes & Bakes, ${name}!`,
+        `Your account is ready.${foodNote} Start exploring home bakers${locationNote} and prebook your favourite treats.`
+      );
 
-      // Show success modal
-      successModal.classList.remove("hidden");
-      successModal.classList.add("flex");
+      // Optionally enrich with AI in background (non-blocking)
+      try {
+        const prompt = `Write a warm 1-sentence welcome for a new user named "${name}" who loves "${favFood || 'baked goods'}" and is from "${location || 'India'}" joining a home baker marketplace. Keep it under 20 words, friendly and food-themed.`;
+        callClaude(prompt).then(welcomeMsg => {
+          if (welcomeMsg && welcomeMsg.length > 5) showToast('🎂 ' + welcomeMsg.trim(), '#10b981');
+        }).catch(() => { });
+      } catch (e) { /* silent fail */ }
+    }
 
-      // Reset form inputs
-      customerForm.reset();
-    });
+    function logoutUser() {
+      state.user = null; state.favBakers = []; state.favFoods = [];
+      saveState(); updateNavForUser();
+      showToast('Signed out successfully.');
+    }
 
-    successOkButton.addEventListener("click", () => {
-      successModal.classList.add("hidden");
-      successModal.classList.remove("flex");
-    });
-
-    successModal.addEventListener("click", (event) => {
-      if (event.target === successModal) {
-        successModal.classList.add("hidden");
-        successModal.classList.remove("flex");
+    function updateNavForUser() {
+      const signInBtn = document.getElementById('navSignInBtn');
+      const userArea = document.getElementById('navUserArea');
+      const userName = document.getElementById('navUserName');
+      const favBtn = document.getElementById('navFavBtn');
+      if (state.user) {
+        signInBtn.classList.add('hidden');
+        userArea.classList.remove('hidden'); userArea.classList.add('flex');
+        userName.textContent = `Hi, ${state.user.name.split(' ')[0]} 👋`;
+        favBtn.classList.remove('hidden');
+      } else {
+        signInBtn.classList.remove('hidden');
+        userArea.classList.add('hidden'); userArea.classList.remove('flex');
+        favBtn.classList.add('hidden');
       }
+    }
+
+    /* ════════════════════════════════════════════
+       API 4 — PREBOOK ORDER
+    ════════════════════════════════════════════ */
+    function openPrebookModal(bakerId) {
+      if (!state.user) { showToast('Sign in to prebook!'); openAccountPanel(); return; }
+      const baker = BAKERS.find(b => b.id === bakerId);
+      if (!baker) return;
+      state.currentBaker = baker;
+      document.getElementById('prebookBakerName').textContent = `Book with ${baker.name}`;
+      document.getElementById('prebookItem').value = '';
+      document.getElementById('prebookDate').value = '';
+      document.getElementById('prebookQty').value = '';
+      document.getElementById('prebookNotes').value = '';
+      document.getElementById('prebookPreview').classList.add('hidden');
+      document.getElementById('prebookMsg').classList.add('hidden');
+      document.getElementById('prebookModal').classList.replace('hidden', 'flex');
+    }
+
+    function closePrebookModal() { document.getElementById('prebookModal').classList.replace('flex', 'hidden'); }
+
+    async function confirmPrebook() {
+      const item = document.getElementById('prebookItem').value.trim();
+      const date = document.getElementById('prebookDate').value;
+      const qty = document.getElementById('prebookQty').value.trim();
+      const delivery = document.getElementById('prebookDelivery').value;
+      const notes = document.getElementById('prebookNotes').value.trim();
+      const btn = document.getElementById('prebookBtn');
+      const msg = document.getElementById('prebookMsg');
+      const preview = document.getElementById('prebookPreview');
+
+      if (!item) { showMsg(msg, 'Please enter what you would like to order.', 'rose'); return; }
+      if (!date) { showMsg(msg, 'Please select a delivery date.', 'rose'); return; }
+
+      btn.innerHTML = '<div class="spinner"></div> Building order…';
+      btn.disabled = true;
+      preview.classList.add('hidden');
+      msg.classList.add('hidden');
+
+      // Local price estimation — no API needed
+      const baker = state.currentBaker;
+      const deliveryCharge = delivery === 'delivery' ? 50 : 0;
+      const qtyNum = parseFloat(qty) || 1;
+      const basePrice = baker.priceFrom;
+      const itemLower = item.toLowerCase();
+      let estimatedPrice = basePrice;
+      if (itemLower.includes('wedding') || itemLower.includes('tier')) estimatedPrice = basePrice * 3;
+      else if (itemLower.match(/(\d+(\.\d+)?)\s*kg/i)) {
+        const kg = parseFloat(item.match(/(\d+(\.\d+)?)\s*kg/i)[1]);
+        estimatedPrice = Math.round(basePrice * Math.max(1, kg));
+      } else if (itemLower.includes('dozen') || itemLower.includes('12 pc')) estimatedPrice = Math.round(basePrice * 1.5);
+      else estimatedPrice = Math.round(basePrice + Math.max(0, qtyNum - 1) * (basePrice * 0.4));
+
+      const totalAmount = estimatedPrice + deliveryCharge;
+      const orderRef = 'CB-' + Math.floor(1000 + Math.random() * 9000);
+      const dateObj = new Date(date);
+      const readyBy = 'Ready by 10 AM on ' + dateObj.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' });
+
+      const order = { orderRef, estimatedPrice, deliveryCharge, totalAmount, item, qty, date, delivery, notes, baker, customer: state.user.name, confirmationNote: baker.name + ' will prepare your order fresh. You will receive a confirmation shortly.', readyBy };
+      state.currentOrder = order;
+
+      preview.classList.remove('hidden');
+      preview.innerHTML =
+        '<p class="font-bold text-stone-950 mb-2">📋 Order Summary</p>' +
+        '<div class="space-y-1 text-stone-600 text-sm">' +
+        '<p><span class="font-semibold text-stone-800">Ref:</span> ' + orderRef + '</p>' +
+        '<p><span class="font-semibold text-stone-800">Item:</span> ' + item + (qty ? ' · ' + qty : '') + '</p>' +
+        '<p><span class="font-semibold text-stone-800">Baker:</span> ' + baker.name + '</p>' +
+        '<p><span class="font-semibold text-stone-800">Date:</span> ' + date + ' · ' + (delivery === 'delivery' ? '🚚 Home Delivery' : '🏠 Self Pickup') + '</p>' +
+        (notes ? '<p><span class="font-semibold text-stone-800">Notes:</span> ' + notes + '</p>' : '') +
+        '<p class="text-emerald-700 font-semibold">⏰ ' + readyBy + '</p>' +
+        '</div>' +
+        '<div class="mt-3 border-t border-rose-100 pt-3 space-y-1 text-sm">' +
+        '<div class="flex justify-between"><span>Item Price</span><span>₹' + estimatedPrice + '</span></div>' +
+        (deliveryCharge ? '<div class="flex justify-between"><span>Delivery</span><span>₹' + deliveryCharge + '</span></div>' : '') +
+        '<div class="flex justify-between font-bold text-stone-950 text-base pt-1 border-t border-stone-100"><span>Total</span><span>₹' + totalAmount + '</span></div>' +
+        '</div>' +
+        '<p class="mt-3 text-xs text-stone-500">' + order.confirmationNote + '</p>';
+
+      btn.innerHTML = 'Confirm &amp; Proceed to Pay →';
+      btn.disabled = false;
+      btn.onclick = function () { closePrebookModal(); openPaymentModal(); };
+    }
+
+    /* ════════════════════════════════════════════
+       API 5 — PAYMENT
+    ════════════════════════════════════════════ */
+    function openPaymentModal() {
+      if (!state.currentOrder) return;
+      const o = state.currentOrder;
+      document.getElementById('paymentSummary').innerHTML = `
+    <p class="font-bold text-stone-950 mb-2">Order ${o.orderRef}</p>
+    <div class="space-y-1 text-stone-600 text-sm">
+      <p>${o.item} · ${o.baker.name}</p>
+      <p>${o.delivery === 'delivery' ? '🚚 Home Delivery' : '🏠 Self Pickup'} · ${o.date}</p>
+      <p class="font-bold text-stone-950 text-base mt-2">Total: ₹${o.totalAmount}</p>
+    </div>`;
+      document.getElementById('paymentProcessing').classList.add('hidden');
+      document.getElementById('paymentModal').classList.replace('hidden', 'flex');
+      selectPayMethod('upi');
+    }
+
+    function closePaymentModal() { document.getElementById('paymentModal').classList.replace('flex', 'hidden'); }
+
+    function selectPayMethod(method) {
+      state.payMethod = method;
+      ['upi', 'card', 'cod'].forEach(m => {
+        const btn = document.getElementById('pm' + m.charAt(0).toUpperCase() + m.slice(1));
+        btn.className = m === method
+          ? 'pay-method-btn rounded-xl border-2 border-rose-500 bg-rose-50 py-3 text-center text-xs font-bold text-rose-700 transition-all'
+          : 'pay-method-btn rounded-xl border-2 border-stone-200 py-3 text-center text-xs font-bold text-stone-600 hover:border-rose-300 transition-all';
+      });
+      document.getElementById('upiFields').classList.toggle('hidden', method !== 'upi');
+      document.getElementById('cardFields').classList.toggle('hidden', method !== 'card');
+      document.getElementById('codFields').classList.toggle('hidden', method !== 'cod');
+    }
+
+    async function processPayment() {
+      const btn = document.getElementById('payBtn');
+      const processing = document.getElementById('paymentProcessing');
+      const o = state.currentOrder;
+
+      // Validate payment fields
+      if (state.payMethod === 'upi') {
+        const upi = document.getElementById('upiId').value.trim();
+        if (!upi || !upi.includes('@')) { showToast('Enter a valid UPI ID (e.g. name@upi)'); return; }
+      } else if (state.payMethod === 'card') {
+        const num = document.getElementById('cardNumber').value.replace(/\s/g, '');
+        if (num.length < 12) { showToast('Enter a valid card number'); return; }
+        const expiry = document.getElementById('cardExpiry').value.trim();
+        if (!expiry || !expiry.includes('/')) { showToast('Enter card expiry as MM/YY'); return; }
+        const cvv = document.getElementById('cardCvv').value.trim();
+        if (cvv.length < 3) { showToast('Enter a valid CVV'); return; }
+      }
+
+      btn.innerHTML = '<div class="spinner"></div> Processing payment…';
+      btn.disabled = true;
+      processing.classList.remove('hidden');
+      processing.innerHTML = '⏳ Verifying payment details…';
+
+      // Simulate payment processing locally
+      await new Promise(r => setTimeout(r, 1800));
+
+      const payDetails = state.payMethod === 'upi'
+        ? 'UPI: ' + document.getElementById('upiId').value
+        : state.payMethod === 'card'
+          ? 'Card ending in ' + document.getElementById('cardNumber').value.slice(-4)
+          : 'Cash on Delivery';
+
+      const txnId = 'TXN-' + Math.random().toString(36).substr(2, 8).toUpperCase();
+      const paidAt = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+
+      processing.innerHTML = '✅ Payment verified — ' + txnId;
+
+      setTimeout(() => {
+        closePaymentModal();
+        const details =
+          'Your order has been confirmed and ' + o.baker.name + ' has been notified to start preparing your ' + o.item + '.' +
+          '\n\n📋 Order: ' + o.orderRef +
+          '\n💳 Txn: ' + txnId +
+          '\n💰 Paid via: ' + payDetails +
+          '\n🕐 ' + 'Today at ' + paidAt +
+          '\n⏰ ' + o.readyBy +
+          '\n\nYou will receive a confirmation on your registered contact.';
+        showSuccess('🎉 Order Confirmed!', '₹' + o.totalAmount + ' paid successfully', details);
+        state.currentOrder = null;
+        btn.innerHTML = 'Pay Now';
+        btn.disabled = false;
+      }, 900);
+    }
+
+
+    /* ─── SUCCESS MODAL ─── */
+    function showSuccess(title, subtitle, details) {
+      document.getElementById('successTitle').textContent = title;
+      document.getElementById('successMessage').textContent = subtitle;
+      const detailEl = document.getElementById('successDetails');
+      if (details) {
+        detailEl.classList.remove('hidden');
+        detailEl.innerHTML = details.replace(/\n/g, '<br>');
+      } else {
+        detailEl.classList.add('hidden');
+      }
+      document.getElementById('successModal').classList.replace('hidden', 'flex');
+    }
+    function closeSuccessModal() { document.getElementById('successModal').classList.replace('flex', 'hidden'); }
+
+    /* ─── HELPERS ─── */
+    function showMsg(el, text, type) {
+      el.classList.remove('hidden', 'text-rose-700', 'text-emerald-700');
+      el.classList.add(type === 'rose' ? 'text-rose-700' : 'text-emerald-700');
+      el.textContent = text;
+    }
+
+    // Card number formatting
+    document.addEventListener('DOMContentLoaded', () => {
+      const cardNum = document.getElementById('cardNumber');
+      if (cardNum) cardNum.addEventListener('input', e => {
+        let v = e.target.value.replace(/\D/g, '').slice(0, 16);
+        e.target.value = v.replace(/(\d{4})/g, '$1 ').trim();
+      });
+
+      // Render static baker cards
+      const grid = document.getElementById('bakersGrid');
+      BAKERS.forEach(b => { grid.innerHTML += bakerCardHTML(b, null, null, null); });
+
+      // Restore session
+      updateNavForUser();
+
+      // Set min date for prebook
+      const dateInput = document.getElementById('prebookDate');
+      if (dateInput) dateInput.min = new Date().toISOString().split('T')[0];
     });
 
-    document.querySelector("#searchForm").addEventListener("submit", (event) => {
-      event.preventDefault();
-      document.querySelector("#discover").scrollIntoView({ behavior: "smooth" });
+    // Close modals on backdrop click
+    ['accountModal', 'prebookModal', 'paymentModal', 'favModal', 'successModal'].forEach(id => {
+      document.getElementById(id).addEventListener('click', function (e) {
+        if (e.target === this) {
+          if (id === 'successModal') closeSuccessModal();
+          else if (id === 'favModal') closeFavModal();
+          else if (id === 'paymentModal') closePaymentModal();
+          else if (id === 'prebookModal') closePrebookModal();
+          else closeAccountPanel();
+        }
+      });
+    });
+
+    // ESC key
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        closeSuccessModal(); closeFavModal(); closePaymentModal(); closePrebookModal(); closeAccountPanel();
+      }
     });
   </script>
 </body>
