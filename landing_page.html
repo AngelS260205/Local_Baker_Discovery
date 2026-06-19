@@ -11,6 +11,55 @@
     href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700;800&family=Mukta:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap"
     rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            rose: {
+              100: '#fbf7f0',   // Warm milk cream
+              200: '#f5e6d3',  // Soft biscuit/cookie base
+              300: '#edd7c0',  // Rich dough
+              400: '#e2c2a4',  // Golden cookie
+              500: '#d3a887',  // Caramel
+              600: '#bd8c67',  // Toffee
+              700: '#a3724e',  // Warm cookie brown
+              800: '#8d5b4c',  // Milk chocolate
+              900: '#704235',  // Rich cocoa
+              950: '#542d22',  // Dark chocolate
+              950: '#331811',  // Deep roasted espresso
+            },
+            amber: {
+              100: '#fefcf7',
+              200: '#fdf5e6',
+              300: '#faedd5',
+              400: '#f5dcbd',
+              500: '#ecc599',
+              600: '#e0aa70',  // Golden honey
+              700: '#c88d51',
+              800: '#a56c38',
+              900: '#845227',
+              950: '#633b1b',
+              950: '#3e210a',
+            },
+            stone: {
+              100: '#fdfbf7',   // Lighter page background
+              200: '#f7f4ee',
+              300: '#ebe6db',
+              400: '#dcd6c7',
+              500: '#c4bcab',
+              600: '#a79e8d',
+              700: '#8a8170',
+              800: '#6e6656',
+              900: '#554e41',
+              950: '#3e382e',
+              950: '#1c1914',
+            }
+          }
+        }
+      }
+    }
+  </script>
   <style>
     body {
       font-family: "Mukta", ui-sans-serif, system-ui, sans-serif;
@@ -30,7 +79,7 @@
 
     .spinner {
       border: 3px solid #f3f3f3;
-      border-top: 3px solid #e11d48;
+      border-top: 3px solid #8d5b4c;
       border-radius: 50%;
       width: 20px;
       height: 20px;
@@ -54,12 +103,12 @@
 
     .baker-card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
     }
 
     .fav-btn.active {
-      color: #e11d48;
-      fill: #e11d48;
+      color: #8d5b4c;
+      fill: #8d5b4c;
     }
 
     .toast {
@@ -78,7 +127,7 @@
     }
 
     .tab-btn.active {
-      background: #e11d48;
+      background: #8d5b4c;
       color: white;
     }
 
@@ -113,6 +162,11 @@
         <a class="hover:text-rose-700" href="#discover">Discover</a>
         <a class="hover:text-rose-700" href="#bakers">Bakers</a>
         <button id="navFavBtn" class="hidden hover:text-rose-700" onclick="openFavModal()">❤️ Favourites</button>
+        <button id="navOrdersBtn" class="hidden hover:text-rose-700 relative" onclick="openOrdersModal()">
+          📦 Orders
+          <span id="navOrdersBadge"
+            class="hidden absolute -top-2 -right-3 h-5 w-5 rounded-full bg-rose-600 text-white text-xs font-bold flex items-center justify-center"></span>
+        </button>
         <div id="navUserArea" class="hidden items-center gap-3">
           <span id="navUserName" class="text-rose-700 font-bold"></span>
           <button onclick="logoutUser()"
@@ -127,7 +181,7 @@
   <!-- ─── HERO ─── -->
   <main>
     <section
-      class="bg-[linear-gradient(110deg,rgba(255,247,237,0.94),rgba(255,228,230,0.68)),url('https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=1800&q=80')] bg-cover bg-center">
+      class="bg-[linear-gradient(110deg,rgba(251,247,240,0.95),rgba(245,230,211,0.7)),url('https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=1800&q=80')] bg-cover bg-center">
       <div class="mx-auto flex min-h-[86vh] max-w-7xl items-center px-5 py-14 sm:px-8">
         <div class="max-w-2xl">
           <p class="mb-4 text-sm font-bold uppercase tracking-widest text-rose-700">Fresh bakes near you</p>
@@ -146,7 +200,13 @@
                 placeholder="📍 Your city or area, e.g. Indiranagar Bengaluru">
               <button onclick="findNearbyBakers()"
                 class="bg-rose-600 px-6 py-4 font-bold text-white hover:bg-rose-700 whitespace-nowrap text-sm">Find
-                Bakers</button>
+                Nearby Bakers</button>
+            </div>
+            <div class="mt-1.5 flex max-w-xl justify-end">
+              <button onclick="detectMyLocation()"
+                class="flex items-center gap-1 text-xs font-bold text-rose-700 hover:text-rose-900 hover:underline transition-all">
+                🎯 Use my current location (Geolocation API)
+              </button>
             </div>
             <div
               class="flex max-w-xl overflow-hidden rounded-lg border border-amber-200 bg-white shadow-lg shadow-stone-950/10">
@@ -677,8 +737,64 @@
       <p id="successMessage" class="mt-2 text-stone-500 text-sm leading-relaxed"></p>
       <div id="successDetails"
         class="mt-4 rounded-xl bg-stone-50 p-4 text-sm text-stone-700 text-left leading-relaxed hidden"></div>
-      <button onclick="closeSuccessModal()"
-        class="mt-6 rounded-lg bg-stone-950 px-8 py-3 font-bold text-white hover:bg-rose-700 w-full">Done</button>
+      <div class="mt-6 flex flex-col gap-3">
+        <button id="successViewOrders" onclick="closeSuccessModal(); openOrdersModal();"
+          class="hidden rounded-lg bg-rose-600 px-8 py-3 font-bold text-white hover:bg-rose-700 w-full">📦 View My
+          Orders</button>
+        <button onclick="closeSuccessModal()"
+          class="rounded-lg bg-stone-950 px-8 py-3 font-bold text-white hover:bg-rose-700 w-full">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+     MODAL 5 — ORDER HISTORY
+══════════════════════════════════════════════ -->
+  <div id="ordersModal"
+    class="modal-overlay fixed inset-0 z-[60] hidden items-center justify-center bg-stone-950/50 p-4">
+    <div class="w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col">
+
+      <!-- Header -->
+      <div class="flex items-center justify-between p-6 border-b border-stone-100 shrink-0">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest text-rose-700">localStorage · Browser Storage</p>
+          <h3 class="mt-1 font-display text-2xl font-bold text-stone-950">My Order History</h3>
+        </div>
+        <button onclick="closeOrdersModal()"
+          class="text-stone-400 hover:text-stone-700 text-2xl leading-none">&times;</button>
+      </div>
+
+      <!-- Filter / Stats bar -->
+      <div id="ordersStatsBar"
+        class="shrink-0 bg-stone-50 border-b border-stone-100 px-6 py-3 flex flex-wrap items-center gap-4 text-sm">
+      </div>
+
+      <!-- Filter tabs -->
+      <div class="shrink-0 flex gap-2 px-6 pt-4 pb-2">
+        <button onclick="filterOrders('all')" id="filterAll"
+          class="order-filter-btn rounded-full bg-rose-600 text-white px-4 py-1.5 text-xs font-bold transition-all">All</button>
+        <button onclick="filterOrders('confirmed')" id="filterConfirmed"
+          class="order-filter-btn rounded-full bg-stone-100 text-stone-600 px-4 py-1.5 text-xs font-bold hover:bg-stone-200 transition-all">Confirmed</button>
+        <button onclick="filterOrders('delivered')" id="filterDelivered"
+          class="order-filter-btn rounded-full bg-stone-100 text-stone-600 px-4 py-1.5 text-xs font-bold hover:bg-stone-200 transition-all">Delivered</button>
+        <button onclick="filterOrders('cancelled')" id="filterCancelled"
+          class="order-filter-btn rounded-full bg-stone-100 text-stone-600 px-4 py-1.5 text-xs font-bold hover:bg-stone-200 transition-all">Cancelled</button>
+        <button onclick="clearAllOrders()"
+          class="ml-auto rounded-full border border-rose-200 text-rose-600 px-4 py-1.5 text-xs font-bold hover:bg-rose-50 transition-all">🗑
+          Clear All</button>
+      </div>
+
+      <!-- Orders list -->
+      <div id="ordersListContainer" class="overflow-y-auto flex-1 px-6 pb-6 space-y-4 mt-2"></div>
+
+      <!-- Footer -->
+      <div class="shrink-0 border-t border-stone-100 px-6 py-4 bg-stone-50 flex items-center justify-between gap-4">
+        <p class="text-xs text-stone-400">Orders are saved in your browser's localStorage and persist across sessions.
+        </p>
+        <button onclick="exportOrders()"
+          class="rounded-lg border border-stone-200 bg-white px-4 py-2 text-xs font-bold text-stone-600 hover:bg-stone-100 transition-all shrink-0">⬇
+          Export JSON</button>
+      </div>
     </div>
   </div>
 
@@ -692,6 +808,7 @@
       users: JSON.parse(localStorage.getItem('cb_users') || '{}'),
       favBakers: JSON.parse(localStorage.getItem('cb_favBakers') || '[]'),
       favFoods: JSON.parse(localStorage.getItem('cb_favFoods') || '[]'),
+      orders: JSON.parse(localStorage.getItem('cb_orders') || '[]'),
       currentBaker: null,
       currentOrder: null,
       payMethod: 'upi'
@@ -707,7 +824,7 @@
     ];
 
     /* ─── TOAST ─── */
-    function showToast(msg, color = '#e11d48') {
+    function showToast(msg, color = '#8d5b4c') {
       const t = document.getElementById('toast');
       t.textContent = msg; t.style.background = color;
       t.classList.add('show');
@@ -719,6 +836,7 @@
       localStorage.setItem('cb_users', JSON.stringify(state.users));
       localStorage.setItem('cb_favBakers', JSON.stringify(state.favBakers));
       localStorage.setItem('cb_favFoods', JSON.stringify(state.favFoods));
+      localStorage.setItem('cb_orders', JSON.stringify(state.orders));
     }
 
     /* ─── CLAUDE API CALL ─── */
@@ -741,9 +859,50 @@
     /* ════════════════════════════════════════════
        API 1 — FIND NEARBY BAKERS
     ════════════════════════════════════════════ */
+    function detectMyLocation() {
+      if (!navigator.geolocation) {
+        showToast('Geolocation is not supported by your browser. Please type your location.');
+        return;
+      }
+      showToast('📍 Accessing location...', '#2563eb');
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          showToast('🔍 Identifying your city...', '#2563eb');
+          try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10`, {
+              headers: {
+                'Accept-Language': 'en',
+                'User-Agent': 'CakesAndBakesApp'
+              }
+            });
+            const data = await res.json();
+            const address = data.address || {};
+            const city = address.city || address.town || address.suburb || address.village || address.state || 'Bengaluru';
+            document.getElementById('locationInput').value = city;
+            showToast(`📍 Location set to ${city}!`, '#10b981');
+            findNearbyBakers();
+          } catch (e) {
+            document.getElementById('locationInput').value = 'Bengaluru';
+            showToast('📍 Location set to Bengaluru (default)', '#f59e0b');
+            findNearbyBakers();
+          }
+        },
+        (err) => {
+          showToast('❌ Location access denied. Please type your location.', '#ef4444');
+        },
+        { enableHighAccuracy: true, timeout: 5000 }
+      );
+    }
+
     async function findNearbyBakers() {
-      const location = document.getElementById('locationInput').value.trim();
-      if (!location) { showToast('Please enter your location first!'); return; }
+      const locationInput = document.getElementById('locationInput');
+      const location = locationInput.value.trim();
+      if (!location) {
+        detectMyLocation();
+        return;
+      }
 
       const section = document.getElementById('nearbyResults');
       const grid = document.getElementById('nearbyGrid');
@@ -759,25 +918,28 @@
       // Local matching by city name
       const loc = location.toLowerCase();
       const cityMatches = BAKERS.filter(b => loc.includes(b.city.toLowerCase()) || b.city.toLowerCase().includes(loc.split(' ')[0]));
-      const others = BAKERS.filter(b => !cityMatches.includes(b));
-      const ranked = [...cityMatches, ...others].slice(0, 4).map((b, i) => ({
+      const ranked = cityMatches.map((b, i) => ({
         id: b.id,
-        matchScore: cityMatches.includes(b) ? 98 - i * 2 : 75 - i * 5,
-        locationNote: cityMatches.includes(b) ? 'Available in ' + b.city + ' — delivers to your area' : 'Ships to ' + location + ' · 1–2 day delivery',
-        deliveryEstimate: cityMatches.includes(b) ? 'Same day' : 'Next day'
+        matchScore: 98 - i * 2,
+        locationNote: 'Available in ' + b.city + ' — delivers to your area',
+        deliveryEstimate: 'Same day'
       }));
 
       spinner.classList.add('hidden');
       grid.innerHTML = '';
-      ranked.forEach(r => {
-        const b = BAKERS.find(x => x.id === r.id);
-        if (b) grid.innerHTML += bakerCardHTML(b, r.locationNote, r.deliveryEstimate, r.matchScore);
-      });
+      if (ranked.length === 0) {
+        grid.innerHTML = '<p class="text-stone-400 col-span-3 text-center py-8">No home bakers found in this location yet.</p>';
+      } else {
+        ranked.forEach(r => {
+          const b = BAKERS.find(x => x.id === r.id);
+          if (b) grid.innerHTML += bakerCardHTML(b, r.locationNote, r.deliveryEstimate, r.matchScore);
+        });
+      }
 
       // Try AI enrichment in background
       try {
         callClaude('In one sentence, name 2 popular Indian sweets or cakes enjoyed in ' + location + '. Keep it under 15 words.')
-          .then(tip => { if (tip) showToast('🍰 Popular in ' + location + ': ' + tip.trim(), '#92400e'); })
+          .then(tip => { if (tip) showToast('🍰 Popular in ' + location + ': ' + tip.trim(), '#8d5b4c'); })
           .catch(() => { });
       } catch (e) { }
     }
@@ -824,30 +986,39 @@
     function bakerCardHTML(b, note, delivery, score) {
       const isFav = state.favBakers.includes(b.id);
       return `
-  <article class="baker-card rounded-3xl border border-rose-100 bg-white shadow-sm overflow-hidden">
-    <div class="relative h-36 bg-stone-100">
-      <img class="h-full w-full object-cover" src="${b.img}" alt="${b.name}" loading="lazy">
-      <button onclick="toggleFavBaker(${b.id}, this)" class="fav-btn absolute top-3 right-3 h-9 w-9 rounded-full bg-white/90 shadow flex items-center justify-center text-lg hover:scale-110 transition-transform ${isFav ? 'active' : ''}">
-        ${isFav ? '❤️' : '🤍'}
-      </button>
-      ${score ? `<span class="absolute top-3 left-3 rounded-full bg-white/90 px-2 py-0.5 text-xs font-bold text-emerald-700">${score}% match</span>` : ''}
-    </div>
-    <div class="p-5">
-      <div class="flex items-start justify-between gap-2">
-        <div>
-          <h3 class="text-lg font-bold text-stone-950">${b.name}</h3>
+  <article class="baker-card rounded-3xl border border-rose-100 bg-white shadow-sm overflow-hidden p-6 flex flex-col justify-between h-full">
+    <div>
+      <div class="flex items-center gap-4 mb-4">
+        <!-- Round profile picture symbol -->
+        <div class="relative h-16 w-16 shrink-0 rounded-full bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600 shadow-inner">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+          <button onclick="toggleFavBaker(${b.id}, this)" class="fav-btn absolute -top-1 -right-1 h-6 w-6 rounded-full bg-white shadow flex items-center justify-center text-xs hover:scale-110 transition-transform ${isFav ? 'active' : ''}">
+            ${isFav ? '❤️' : '🤍'}
+          </button>
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center justify-between gap-1">
+            <h3 class="text-lg font-bold text-stone-950 truncate">${b.name}</h3>
+            <span class="shrink-0 rounded-full bg-rose-50 px-2 py-0.5 text-xs font-semibold text-rose-700">⭐ ${b.rating}</span>
+          </div>
           <p class="text-sm text-stone-500">📍 ${b.city}</p>
         </div>
-        <span class="shrink-0 rounded-full bg-rose-50 px-3 py-1 text-sm font-semibold text-rose-700">⭐ ${b.rating}</span>
       </div>
-      <p class="mt-2 text-xs font-semibold text-rose-700">${b.specialty}</p>
-      <p class="mt-1 text-sm text-stone-600 leading-relaxed">${b.desc}</p>
-      ${note ? `<p class="mt-2 text-xs text-emerald-700 bg-emerald-50 rounded-lg px-3 py-2">✓ ${note}</p>` : ''}
-      <div class="mt-3 flex items-center justify-between gap-2">
+      
+      <p class="text-xs font-bold uppercase tracking-wider text-rose-700">${b.specialty}</p>
+      <p class="mt-1.5 text-sm text-stone-600 leading-relaxed">${b.desc}</p>
+      ${note ? `<p class="mt-3 text-xs text-emerald-700 bg-emerald-50 rounded-lg px-3 py-2 border border-emerald-100">✓ ${note}</p>` : ''}
+    </div>
+    
+    <div class="mt-4 pt-4 border-t border-stone-100">
+      <div class="flex items-center justify-between gap-2 mb-3">
         <span class="text-sm font-bold text-stone-950">From ₹${b.priceFrom}</span>
         ${delivery ? `<span class="text-xs text-stone-500">${delivery} delivery</span>` : ''}
+        ${score ? `<span class="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-bold text-emerald-700">${score}% match</span>` : ''}
       </div>
-      <button onclick="openPrebookModal(${b.id})" class="mt-4 w-full rounded-full bg-gradient-to-r from-rose-500 to-amber-400 px-5 py-2 text-sm font-bold text-white hover:opacity-90">
+      <button onclick="openPrebookModal(${b.id})" class="w-full rounded-full bg-gradient-to-r from-rose-500 to-amber-400 px-5 py-2.5 text-sm font-bold text-white hover:opacity-95 transition-opacity">
         Prebook
       </button>
     </div>
@@ -1055,15 +1226,28 @@ No markdown, no explanation, just JSON.`;
       const userArea = document.getElementById('navUserArea');
       const userName = document.getElementById('navUserName');
       const favBtn = document.getElementById('navFavBtn');
+      const ordersBtn = document.getElementById('navOrdersBtn');
+      const ordersBadge = document.getElementById('navOrdersBadge');
       if (state.user) {
         signInBtn.classList.add('hidden');
         userArea.classList.remove('hidden'); userArea.classList.add('flex');
         userName.textContent = `Hi, ${state.user.name.split(' ')[0]} 👋`;
         favBtn.classList.remove('hidden');
+        ordersBtn.classList.remove('hidden');
+        // Badge: count orders for this user
+        const myOrders = state.orders.filter(o => o.customerEmail === state.user.email);
+        if (myOrders.length > 0) {
+          ordersBadge.classList.remove('hidden');
+          ordersBadge.classList.add('flex');
+          ordersBadge.textContent = myOrders.length;
+        } else {
+          ordersBadge.classList.add('hidden');
+        }
       } else {
         signInBtn.classList.remove('hidden');
         userArea.classList.add('hidden'); userArea.classList.remove('flex');
         favBtn.classList.add('hidden');
+        ordersBtn.classList.add('hidden');
       }
     }
 
@@ -1082,6 +1266,12 @@ No markdown, no explanation, just JSON.`;
       document.getElementById('prebookNotes').value = '';
       document.getElementById('prebookPreview').classList.add('hidden');
       document.getElementById('prebookMsg').classList.add('hidden');
+
+      const btn = document.getElementById('prebookBtn');
+      btn.textContent = 'Confirm Prebook & Pay';
+      btn.onclick = confirmPrebook;
+      btn.disabled = false;
+
       document.getElementById('prebookModal').classList.replace('hidden', 'flex');
     }
 
@@ -1181,6 +1371,13 @@ No markdown, no explanation, just JSON.`;
       document.getElementById('upiFields').classList.toggle('hidden', method !== 'upi');
       document.getElementById('cardFields').classList.toggle('hidden', method !== 'card');
       document.getElementById('codFields').classList.toggle('hidden', method !== 'cod');
+
+      const payBtn = document.getElementById('payBtn');
+      if (method === 'cod') {
+        payBtn.textContent = 'Confirm Order';
+      } else {
+        payBtn.textContent = 'Pay Now';
+      }
     }
 
     async function processPayment() {
@@ -1201,10 +1398,11 @@ No markdown, no explanation, just JSON.`;
         if (cvv.length < 3) { showToast('Enter a valid CVV'); return; }
       }
 
-      btn.innerHTML = '<div class="spinner"></div> Processing payment…';
+      const isCod = state.payMethod === 'cod';
+      btn.innerHTML = isCod ? '<div class="spinner"></div> Confirming order…' : '<div class="spinner"></div> Processing payment…';
       btn.disabled = true;
       processing.classList.remove('hidden');
-      processing.innerHTML = '⏳ Verifying payment details…';
+      processing.innerHTML = isCod ? '⏳ Confirming your order…' : '⏳ Verifying payment details…';
 
       // Simulate payment processing locally
       await new Promise(r => setTimeout(r, 1800));
@@ -1218,28 +1416,54 @@ No markdown, no explanation, just JSON.`;
       const txnId = 'TXN-' + Math.random().toString(36).substr(2, 8).toUpperCase();
       const paidAt = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
 
-      processing.innerHTML = '✅ Payment verified — ' + txnId;
+      processing.innerHTML = isCod ? '✅ Order confirmed!' : '✅ Payment verified — ' + txnId;
 
       setTimeout(() => {
         closePaymentModal();
+
+        // ── Save order to localStorage ──
+        const savedOrder = {
+          orderRef: o.orderRef,
+          item: o.item,
+          qty: o.qty || '1',
+          bakerName: o.baker.name,
+          bakerCity: o.baker.city,
+          bakerSpecialty: o.baker.specialty,
+          date: o.date,
+          delivery: o.delivery,
+          notes: o.notes || '',
+          estimatedPrice: o.estimatedPrice,
+          deliveryCharge: o.deliveryCharge,
+          totalAmount: o.totalAmount,
+          readyBy: o.readyBy,
+          txnId: isCod ? 'N/A' : txnId,
+          payMethod: payDetails,
+          paidAt: new Date().toISOString(),
+          paidAtDisplay: 'Today at ' + paidAt,
+          status: 'confirmed',
+          customerEmail: state.user ? state.user.email : ''
+        };
+        state.orders.unshift(savedOrder); // newest first
+        saveState();
+
         const details =
           'Your order has been confirmed and ' + o.baker.name + ' has been notified to start preparing your ' + o.item + '.' +
           '\n\n📋 Order: ' + o.orderRef +
-          '\n💳 Txn: ' + txnId +
-          '\n💰 Paid via: ' + payDetails +
+          (isCod ? '' : '\n💳 Txn: ' + txnId) +
+          '\n💰 ' + (isCod ? 'Pay on Delivery' : 'Paid via') + ': ' + payDetails +
           '\n🕐 ' + 'Today at ' + paidAt +
           '\n⏰ ' + o.readyBy +
           '\n\nYou will receive a confirmation on your registered contact.';
-        showSuccess('🎉 Order Confirmed!', '₹' + o.totalAmount + ' paid successfully', details);
+        showSuccess('🎉 Order Confirmed!', isCod ? 'Order placed successfully' : '₹' + o.totalAmount + ' paid successfully', details, true);
         state.currentOrder = null;
-        btn.innerHTML = 'Pay Now';
+        btn.innerHTML = isCod ? 'Confirm Order' : 'Pay Now';
         btn.disabled = false;
       }, 900);
     }
 
 
     /* ─── SUCCESS MODAL ─── */
-    function showSuccess(title, subtitle, details) {
+    function showSuccess(title, subtitle, details, showOrdersBtn = false) {
       document.getElementById('successTitle').textContent = title;
       document.getElementById('successMessage').textContent = subtitle;
       const detailEl = document.getElementById('successDetails');
@@ -1249,6 +1473,9 @@ No markdown, no explanation, just JSON.`;
       } else {
         detailEl.classList.add('hidden');
       }
+      // Show/hide "View My Orders" button
+      const viewOrdersBtn = document.getElementById('successViewOrders');
+      if (viewOrdersBtn) viewOrdersBtn.classList.toggle('hidden', !showOrdersBtn);
       document.getElementById('successModal').classList.replace('hidden', 'flex');
     }
     function closeSuccessModal() { document.getElementById('successModal').classList.replace('flex', 'hidden'); }
@@ -1281,13 +1508,14 @@ No markdown, no explanation, just JSON.`;
     });
 
     // Close modals on backdrop click
-    ['accountModal', 'prebookModal', 'paymentModal', 'favModal', 'successModal'].forEach(id => {
+    ['accountModal', 'prebookModal', 'paymentModal', 'favModal', 'successModal', 'ordersModal'].forEach(id => {
       document.getElementById(id).addEventListener('click', function (e) {
         if (e.target === this) {
           if (id === 'successModal') closeSuccessModal();
           else if (id === 'favModal') closeFavModal();
           else if (id === 'paymentModal') closePaymentModal();
           else if (id === 'prebookModal') closePrebookModal();
+          else if (id === 'ordersModal') closeOrdersModal();
           else closeAccountPanel();
         }
       });
@@ -1296,10 +1524,192 @@ No markdown, no explanation, just JSON.`;
     // ESC key
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape') {
-        closeSuccessModal(); closeFavModal(); closePaymentModal(); closePrebookModal(); closeAccountPanel();
+        closeSuccessModal(); closeFavModal(); closePaymentModal(); closePrebookModal(); closeAccountPanel(); closeOrdersModal();
       }
     });
+
+
+    /* ════════════════════════════════════════════
+       ORDER HISTORY — localStorage API
+    ════════════════════════════════════════════ */
+
+    let currentFilter = 'all';
+
+    function openOrdersModal() {
+      if (!state.user) { showToast('Sign in to view your orders!'); openAccountPanel(); return; }
+      currentFilter = 'all';
+      renderOrdersModal();
+      document.getElementById('ordersModal').classList.replace('hidden', 'flex');
+    }
+
+    function closeOrdersModal() {
+      document.getElementById('ordersModal').classList.replace('flex', 'hidden');
+    }
+
+    function filterOrders(status) {
+      currentFilter = status;
+      // Update active tab style
+      document.querySelectorAll('.order-filter-btn').forEach(btn => {
+        btn.className = 'order-filter-btn rounded-full bg-stone-100 text-stone-600 px-4 py-1.5 text-xs font-bold hover:bg-stone-200 transition-all';
+      });
+      const activeBtn = document.getElementById('filter' + status.charAt(0).toUpperCase() + status.slice(1));
+      if (activeBtn) activeBtn.className = 'order-filter-btn rounded-full bg-rose-600 text-white px-4 py-1.5 text-xs font-bold transition-all';
+      renderOrdersModal();
+    }
+
+    function renderOrdersModal() {
+      const myOrders = state.orders.filter(o => o.customerEmail === state.user.email);
+      const filtered = currentFilter === 'all' ? myOrders : myOrders.filter(o => o.status === currentFilter);
+
+      // ── Stats bar ──
+      const totalSpent = myOrders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+      const confirmed = myOrders.filter(o => o.status === 'confirmed').length;
+      const delivered = myOrders.filter(o => o.status === 'delivered').length;
+      const statsBar = document.getElementById('ordersStatsBar');
+      statsBar.innerHTML =
+        '<span class="font-bold text-stone-700">' + myOrders.length + ' total orders</span>' +
+        '<span class="text-stone-400">·</span>' +
+        '<span class="text-emerald-700 font-semibold">₹' + totalSpent.toLocaleString('en-IN') + ' spent</span>' +
+        '<span class="text-stone-400">·</span>' +
+        '<span class="text-rose-700">' + confirmed + ' confirmed</span>' +
+        '<span class="text-stone-400">·</span>' +
+        '<span class="text-blue-700">' + delivered + ' delivered</span>';
+
+      // ── Orders list ──
+      const container = document.getElementById('ordersListContainer');
+
+      if (filtered.length === 0) {
+        container.innerHTML =
+          '<div class="flex flex-col items-center justify-center py-16 text-center">' +
+          '<div class="text-6xl mb-4">🛒</div>' +
+          '<p class="font-display text-xl font-bold text-stone-950">' + (currentFilter === 'all' ? 'No orders yet' : 'No ' + currentFilter + ' orders') + '</p>' +
+          '<p class="mt-2 text-sm text-stone-400">' + (currentFilter === 'all' ? 'Your completed orders will appear here.' : 'Try switching to a different filter.') + '</p>' +
+          (currentFilter === 'all' ? '<button onclick="closeOrdersModal(); document.getElementById(\'bakers\').scrollIntoView({behavior:\'smooth\'})" class="mt-6 rounded-full bg-rose-600 px-6 py-2.5 text-sm font-bold text-white hover:bg-rose-700">Browse Bakers →</button>' : '') +
+          '</div>';
+        return;
+      }
+
+      container.innerHTML = filtered.map((order, idx) => {
+        const realIdx = state.orders.indexOf(order);
+        const date = new Date(order.paidAt);
+        const dateStr = isNaN(date) ? order.paidAtDisplay : date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+        const timeStr = isNaN(date) ? '' : date.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+
+        const statusColors = {
+          confirmed: 'bg-amber-50 text-amber-700 border-amber-200',
+          delivered: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+          cancelled: 'bg-red-50 text-red-700 border-red-200'
+        };
+        const statusIcons = { confirmed: '✅', delivered: '📦', cancelled: '❌' };
+        const statusColor = statusColors[order.status] || statusColors.confirmed;
+        const statusIcon = statusIcons[order.status] || '✅';
+
+        return '<div class="rounded-2xl border border-stone-100 bg-white shadow-sm overflow-hidden hover:shadow-md transition-shadow">' +
+
+          // Card header
+          '<div class="flex items-start justify-between gap-3 p-4 border-b border-stone-50 bg-stone-50">' +
+          '<div>' +
+          '<p class="font-bold text-stone-950">' + order.item + (order.qty ? ' <span class="text-stone-400 font-normal text-sm">× ' + order.qty + '</span>' : '') + '</p>' +
+          '<p class="text-sm text-stone-500 mt-0.5">👩‍🍳 ' + order.bakerName + ' · ' + order.bakerCity + '</p>' +
+          '</div>' +
+          '<span class="shrink-0 rounded-full border px-3 py-1 text-xs font-bold ' + statusColor + '">' + statusIcon + ' ' + order.status.charAt(0).toUpperCase() + order.status.slice(1) + '</span>' +
+          '</div>' +
+
+          // Card body
+          '<div class="p-4 grid grid-cols-2 gap-x-6 gap-y-2 text-sm">' +
+          '<div><p class="text-xs text-stone-400 uppercase font-semibold mb-0.5">Order Ref</p><p class="font-mono font-bold text-stone-800">' + order.orderRef + '</p></div>' +
+          '<div><p class="text-xs text-stone-400 uppercase font-semibold mb-0.5">Paid</p><p class="font-semibold text-stone-700">' + dateStr + (timeStr ? ' · ' + timeStr : '') + '</p></div>' +
+          '<div><p class="text-xs text-stone-400 uppercase font-semibold mb-0.5">Delivery</p><p class="text-stone-700">' + (order.delivery === 'delivery' ? '🚚 Home Delivery' : '🏠 Self Pickup') + '</p></div>' +
+          '<div><p class="text-xs text-stone-400 uppercase font-semibold mb-0.5">Deliver By</p><p class="text-stone-700">' + order.date + '</p></div>' +
+          '<div><p class="text-xs text-stone-400 uppercase font-semibold mb-0.5">Payment</p><p class="text-stone-700 truncate">' + order.payMethod + '</p></div>' +
+          '<div><p class="text-xs text-stone-400 uppercase font-semibold mb-0.5">Transaction</p><p class="font-mono text-xs text-stone-600">' + order.txnId + '</p></div>' +
+          (order.notes ? '<div class="col-span-2"><p class="text-xs text-stone-400 uppercase font-semibold mb-0.5">Special Notes</p><p class="text-stone-600 italic">' + order.notes + '</p></div>' : '') +
+          '</div>' +
+
+          // Card footer — price + actions
+          '<div class="flex items-center justify-between gap-3 px-4 py-3 bg-gradient-to-r from-rose-50 to-amber-50 border-t border-stone-100">' +
+          '<div>' +
+          '<span class="text-xs text-stone-400">Item ₹' + order.estimatedPrice + (order.deliveryCharge ? ' + Delivery ₹' + order.deliveryCharge : '') + '</span>' +
+          '<p class="font-bold text-stone-950 text-lg">Total: ₹' + order.totalAmount + '</p>' +
+          '</div>' +
+          '<div class="flex gap-2">' +
+          (order.status === 'confirmed' ? '<button onclick="markDelivered(' + realIdx + ')" class="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-emerald-700 transition-all">Mark Delivered</button>' : '') +
+          (order.status !== 'cancelled' ? '<button onclick="cancelOrder(' + realIdx + ')" class="rounded-lg border border-red-200 text-red-600 px-3 py-1.5 text-xs font-bold hover:bg-red-50 transition-all">Cancel</button>' : '') +
+          '<button onclick="reorderItem(' + realIdx + ')" class="rounded-lg bg-rose-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-rose-700 transition-all">Reorder</button>' +
+          '</div>' +
+          '</div>' +
+          '</div>';
+      }).join('');
+    }
+
+    function markDelivered(idx) {
+      if (state.orders[idx]) {
+        state.orders[idx].status = 'delivered';
+        saveState();
+        updateNavForUser();
+        renderOrdersModal();
+        showToast('📦 Order marked as delivered!', '#10b981');
+      }
+    }
+
+    function cancelOrder(idx) {
+      if (!confirm('Cancel this order? This cannot be undone.')) return;
+      if (state.orders[idx]) {
+        state.orders[idx].status = 'cancelled';
+        saveState();
+        updateNavForUser();
+        renderOrdersModal();
+        showToast('Order cancelled.', '#6b7280');
+      }
+    }
+
+    function reorderItem(idx) {
+      const o = state.orders[idx];
+      if (!o) return;
+      const baker = BAKERS.find(b => b.name === o.bakerName);
+      if (baker) {
+        closeOrdersModal();
+        openPrebookModal(baker.id);
+        // Pre-fill the form after modal opens
+        setTimeout(() => {
+          document.getElementById('prebookItem').value = o.item;
+          document.getElementById('prebookQty').value = o.qty || '';
+          document.getElementById('prebookNotes').value = o.notes || '';
+        }, 100);
+        showToast('✏️ Order details pre-filled — pick a new date!', '#8d5b4c');
+      } else {
+        showToast('Baker not available for reorder.');
+      }
+    }
+
+    function clearAllOrders() {
+      const myOrders = state.orders.filter(o => o.customerEmail === state.user.email);
+      if (myOrders.length === 0) { showToast('No orders to clear.'); return; }
+      if (!confirm('Clear all ' + myOrders.length + ' order(s) from history? This cannot be undone.')) return;
+      state.orders = state.orders.filter(o => o.customerEmail !== state.user.email);
+      saveState();
+      updateNavForUser();
+      renderOrdersModal();
+      showToast('Order history cleared.', '#6b7280');
+    }
+
+    function exportOrders() {
+      const myOrders = state.orders.filter(o => o.customerEmail === state.user.email);
+      if (myOrders.length === 0) { showToast('No orders to export.'); return; }
+      const blob = new Blob([JSON.stringify(myOrders, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'cakes-and-bakes-orders-' + new Date().toISOString().slice(0, 10) + '.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('📥 Orders exported!', '#10b981');
+    }
+
   </script>
+
 </body>
 
 </html>
