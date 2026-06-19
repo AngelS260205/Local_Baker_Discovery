@@ -1147,6 +1147,11 @@ No markdown, no explanation, just JSON.`;
       const existingUser = state.users[email];
       if (existingUser) {
         // Registered user found
+        if (existingUser.password && existingUser.password !== pass) {
+          btn.innerHTML = 'Sign In'; btn.disabled = false;
+          showMsg(msg, 'Invalid password.', 'rose');
+          return;
+        }
         state.user = existingUser;
         saveState();
         closeAccountPanel();
@@ -1154,15 +1159,8 @@ No markdown, no explanation, just JSON.`;
         btn.innerHTML = 'Sign In'; btn.disabled = false;
         showSuccess('🎉 Welcome Back!', `Signed in as ${existingUser.name}`, `Great to see you again, ${existingUser.name}! Your bookings and favourites are ready.`);
       } else {
-        // Not registered — auto-create a guest session
-        const guestUser = { name: email.split('@')[0], email, location: 'India', favFood: 'Cake' };
-        state.users[email] = guestUser;
-        state.user = guestUser;
-        saveState();
-        closeAccountPanel();
-        updateNavForUser();
         btn.innerHTML = 'Sign In'; btn.disabled = false;
-        showSuccess('🎉 Welcome!', `Signed in as ${guestUser.name}`, `You're signed in! Explore bakers near you and start prebooking.`);
+        showMsg(msg, 'Account does not exist. Please register first.', 'rose');
       }
     }
 
@@ -1184,8 +1182,8 @@ No markdown, no explanation, just JSON.`;
       btn.innerHTML = '<div class="spinner"></div> Creating account…';
       btn.disabled = true;
 
-      // Save user locally immediately
-      const user = { name, phone, email, location, favFood };
+      // Save user locally immediately (including password)
+      const user = { name, phone, email, password: pass, location, favFood };
       state.users[email] = user;
       state.user = user;
       if (favFood) {
