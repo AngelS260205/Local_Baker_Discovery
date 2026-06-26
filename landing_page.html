@@ -17,43 +17,42 @@
         extend: {
           colors: {
             rose: {
-              100: '#fbf7f0',   // Warm milk cream
-              200: '#f5e6d3',  // Soft biscuit/cookie base
-              300: '#edd7c0',  // Rich dough
-              400: '#e2c2a4',  // Golden cookie
-              500: '#d3a887',  // Caramel
-              600: '#bd8c67',  // Toffee
-              700: '#a3724e',  // Warm cookie brown
-              800: '#8d5b4c',  // Milk chocolate
-              900: '#704235',  // Rich cocoa
-              950: '#542d22',  // Dark chocolate
-              950: '#331811',  // Deep roasted espresso
+              50: '#faf6f0',    // Off-white / half-white
+              100: '#f4eee3',   // Soft cream (half-white)
+              200: '#ebe2d5',   // Warm cream
+              300: '#e1d6c5',   // Soft light beige
+              400: '#d7cab5',   // Warm beige
+              500: '#9c6f55',   // Medium warm brown (Prebook gradient start)
+              600: '#8c624a',   // Primary button brown (darker than background)
+              700: '#754e38',   // Primary button hover brown
+              800: '#5e3c29',   // Milk chocolate brown
+              900: '#4a2e1e',   // Cocoa brown
+              950: '#331f14',   // Espresso brown
             },
             amber: {
-              100: '#fefcf7',
-              200: '#fdf5e6',
-              300: '#faedd5',
-              400: '#f5dcbd',
+              100: '#faf7f2',
+              200: '#f5eee0',
+              300: '#ecdcc9',
+              400: '#b58c73',   // Button gradient end
               500: '#ecc599',
-              600: '#e0aa70',  // Golden honey
+              600: '#e0aa70',
               700: '#c88d51',
               800: '#a56c38',
-              900: '#845227',
-              950: '#633b1b',
-              950: '#3e210a',
+              900: '#63402c',   // Darker brown search/quick buttons
+              950: '#482d1e',
             },
             stone: {
-              100: '#fdfbf7',   // Lighter page background
-              200: '#f7f4ee',
-              300: '#ebe6db',
-              400: '#dcd6c7',
-              500: '#c4bcab',
-              600: '#a79e8d',
-              700: '#8a8170',
-              800: '#6e6656',
-              900: '#554e41',
-              950: '#3e382e',
-              950: '#1c1914',
+              50: '#ecdcc9',    // Light brown page background
+              100: '#dfcfc0',   // Slightly darker light brown
+              200: '#d3bead',   // For border lines/accents
+              300: '#c5ae9c',
+              400: '#b69d8b',
+              500: '#a38875',
+              600: '#8f7563',
+              700: '#796150',
+              800: '#614d3f',
+              900: '#31271f',   // Deep warm brown for contrast text
+              950: '#231a14',   // Deep espresso for dark footer
             }
           }
         }
@@ -79,7 +78,7 @@
 
     .spinner {
       border: 3px solid #f3f3f3;
-      border-top: 3px solid #8d5b4c;
+      border-top: 3px solid #8c624a;
       border-radius: 50%;
       width: 20px;
       height: 20px;
@@ -107,8 +106,8 @@
     }
 
     .fav-btn.active {
-      color: #8d5b4c;
-      fill: #8d5b4c;
+      color: #8c624a;
+      fill: #8c624a;
     }
 
     .toast {
@@ -127,7 +126,7 @@
     }
 
     .tab-btn.active {
-      background: #8d5b4c;
+      background: #8c624a;
       color: white;
     }
 
@@ -143,7 +142,7 @@
   <div id="toast" class="toast rounded-xl bg-stone-950 px-5 py-3 text-sm font-semibold text-white shadow-2xl"></div>
 
   <!-- ─── HEADER ─── -->
-  <header class="sticky top-0 z-50 border-b border-rose-100 bg-white/90 backdrop-blur">
+  <header class="sticky top-0 z-50 border-b border-stone-200 bg-stone-50">
     <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 sm:px-8">
       <a class="flex items-center gap-3 font-bold text-stone-950 hover:opacity-90 transition-opacity" href="#">
         <div
@@ -172,7 +171,7 @@
           <button onclick="logoutUser()"
             class="rounded-lg border border-stone-200 px-4 py-2 text-sm hover:bg-stone-100">Sign Out</button>
         </div>
-        <button id="navSignInBtn" class="rounded-lg bg-stone-950 px-4 py-2 text-white hover:bg-rose-700" type="button"
+        <button id="navSignInBtn" class="rounded-lg bg-rose-600 px-4 py-2 text-white hover:bg-rose-700" type="button"
           onclick="openAccountPanel()">Sign In</button>
       </nav>
     </div>
@@ -586,8 +585,12 @@
             <option value="delivery">Home Delivery (+₹50)</option>
           </select>
         </label>
-        <label class="grid gap-1 text-sm font-semibold text-stone-700">Special Instructions
-          <textarea id="prebookNotes"
+        <label class="grid gap-1 text-sm font-semibold text-stone-700">
+          <div class="flex justify-between items-center">
+            <span>Special Instructions</span>
+            <span id="charCounter" class="text-xs font-medium text-stone-400">0 / 300 characters</span>
+          </div>
+          <textarea id="prebookNotes" maxlength="300"
             class="rounded-lg border border-stone-200 px-3 py-3 font-normal outline-none focus:border-rose-500 resize-none"
             rows="2" placeholder="Allergy info, custom message on cake, etc."></textarea>
         </label>
@@ -742,7 +745,7 @@
           class="hidden rounded-lg bg-rose-600 px-8 py-3 font-bold text-white hover:bg-rose-700 w-full">📦 View My
           Orders</button>
         <button onclick="closeSuccessModal()"
-          class="rounded-lg bg-stone-950 px-8 py-3 font-bold text-white hover:bg-rose-700 w-full">Done</button>
+          class="rounded-lg bg-rose-600 px-8 py-3 font-bold text-white hover:bg-rose-700 w-full">Done</button>
       </div>
     </div>
   </div>
@@ -824,7 +827,7 @@
     ];
 
     /* ─── TOAST ─── */
-    function showToast(msg, color = '#8d5b4c') {
+    function showToast(msg, color = '#8c624a') {
       const t = document.getElementById('toast');
       t.textContent = msg; t.style.background = color;
       t.classList.add('show');
@@ -939,7 +942,7 @@
       // Try AI enrichment in background
       try {
         callClaude('In one sentence, name 2 popular Indian sweets or cakes enjoyed in ' + location + '. Keep it under 15 words.')
-          .then(tip => { if (tip) showToast('🍰 Popular in ' + location + ': ' + tip.trim(), '#8d5b4c'); })
+          .then(tip => { if (tip) showToast('🍰 Popular in ' + location + ': ' + tip.trim(), '#8c624a'); })
           .catch(() => { });
       } catch (e) { }
     }
@@ -983,10 +986,41 @@
     }
 
 
+    function updateFavBtnForBaker(id, isFav) {
+      const buttons = document.querySelectorAll('button');
+      buttons.forEach(btn => {
+        const onclickAttr = btn.getAttribute('onclick') || '';
+        if (onclickAttr.includes(`toggleFavBaker(${id}`) || onclickAttr.includes(`toggleFavBaker(${id},`)) {
+          if (isFav) {
+            btn.textContent = '❤️';
+            btn.classList.add('active');
+          } else {
+            btn.textContent = '🤍';
+            btn.classList.remove('active');
+          }
+        }
+      });
+    }
+
+    function handleBakerCardDblClick(id, event) {
+      if (event.target.closest('button')) return;
+      if (!state.user) { showToast('Sign in to save favourites!'); openAccountPanel(); return; }
+      const idx = state.favBakers.indexOf(id);
+      if (idx === -1) {
+        state.favBakers.push(id);
+        updateFavBtnForBaker(id, true);
+        showToast('Baker saved to favourites!', '#10b981');
+        saveState();
+        updateNavForUser();
+      } else {
+        showToast('Baker is already in favourites!', '#10b981');
+      }
+    }
+
     function bakerCardHTML(b, note, delivery, score) {
       const isFav = state.favBakers.includes(b.id);
       return `
-  <article class="baker-card rounded-3xl border border-rose-100 bg-white shadow-sm overflow-hidden p-6 flex flex-col justify-between h-full">
+  <article ondblclick="handleBakerCardDblClick(${b.id}, event)" class="baker-card rounded-3xl border border-rose-100 bg-white shadow-sm overflow-hidden p-6 flex flex-col justify-between h-full cursor-pointer select-none">
     <div>
       <div class="flex items-center gap-4 mb-4">
         <!-- Round profile picture symbol -->
@@ -1027,20 +1061,21 @@
 
     /* ════════════════════════════════════════════
        API 2 — FAVOURITE FOODS
-    ════════════════════════════════════════════ */
+     ════════════════════════════════════════════ */
     function toggleFavBaker(id, btn) {
       if (!state.user) { showToast('Sign in to save favourites!'); openAccountPanel(); return; }
       const idx = state.favBakers.indexOf(id);
       if (idx === -1) {
         state.favBakers.push(id);
-        btn.textContent = '❤️'; btn.classList.add('active');
+        updateFavBtnForBaker(id, true);
         showToast('Baker saved to favourites!', '#10b981');
       } else {
         state.favBakers.splice(idx, 1);
-        btn.textContent = '🤍'; btn.classList.remove('active');
+        updateFavBtnForBaker(id, false);
         showToast('Removed from favourites');
       }
       saveState();
+      updateNavForUser();
     }
 
     async function addFavouriteFood() {
@@ -1262,6 +1297,11 @@ No markdown, no explanation, just JSON.`;
       document.getElementById('prebookDate').value = '';
       document.getElementById('prebookQty').value = '';
       document.getElementById('prebookNotes').value = '';
+      const charCounter = document.getElementById('charCounter');
+      if (charCounter) {
+        charCounter.textContent = '0 / 300 characters';
+        charCounter.style.color = '#a8a29e';
+      }
       document.getElementById('prebookPreview').classList.add('hidden');
       document.getElementById('prebookMsg').classList.add('hidden');
 
@@ -1503,6 +1543,42 @@ No markdown, no explanation, just JSON.`;
       // Set min date for prebook
       const dateInput = document.getElementById('prebookDate');
       if (dateInput) dateInput.min = new Date().toISOString().split('T')[0];
+
+      // Search bars Enter key support
+      const locationInput = document.getElementById('locationInput');
+      if (locationInput) {
+        locationInput.addEventListener('keydown', e => {
+          if (e.key === 'Enter') {
+            findNearbyBakers();
+          }
+        });
+      }
+
+      const cravingSearch = document.getElementById('cravingSearch');
+      if (cravingSearch) {
+        cravingSearch.addEventListener('keydown', e => {
+          if (e.key === 'Enter') {
+            searchBakers();
+          }
+        });
+      }
+
+      // Special Instructions character counter
+      const notesTextarea = document.getElementById('prebookNotes');
+      const counter = document.getElementById('charCounter');
+      if (notesTextarea && counter) {
+        notesTextarea.addEventListener('input', () => {
+          const len = notesTextarea.value.length;
+          counter.textContent = `${len} / 300 characters`;
+          if (len === 0) {
+            counter.style.color = '#a8a29e'; // stone-400
+          } else if (len >= 270) {
+            counter.style.color = '#ef4444'; // red-500 / rose-500
+          } else {
+            counter.style.color = '#10b981'; // emerald-500 / green
+          }
+        });
+      }
     });
 
     // Close modals on backdrop click
@@ -1672,7 +1748,11 @@ No markdown, no explanation, just JSON.`;
         setTimeout(() => {
           document.getElementById('prebookItem').value = o.item;
           document.getElementById('prebookQty').value = o.qty || '';
-          document.getElementById('prebookNotes').value = o.notes || '';
+          const notesTextarea = document.getElementById('prebookNotes');
+          if (notesTextarea) {
+            notesTextarea.value = o.notes || '';
+            notesTextarea.dispatchEvent(new Event('input'));
+          }
         }, 100);
         showToast('✏️ Order details pre-filled — pick a new date!', '#8d5b4c');
       } else {
